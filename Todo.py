@@ -1,6 +1,7 @@
 '''
 MASTER TODO LIST for User Profile project
 '''
+
 # TODO: Use the supplied HTML/CSS to build and style the
 # profile page and bio page.
 
