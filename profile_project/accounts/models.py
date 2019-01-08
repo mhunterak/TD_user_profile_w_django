@@ -7,7 +7,7 @@ from django.db import models
 class Account(models.Model):
     '''
 Account is the main class for this project, and stores user information to be
-displayed on their profile page. Does not handle authentication directly,
+displayed on their profile page. Does not handle authentication directly.
     '''
     # First Name
     firstname = models.CharField(
@@ -18,10 +18,10 @@ displayed on their profile page. Does not handle authentication directly,
         max_length=64,
     )
     # Email - also the primary key
-    enail = models.EmailField(
+    email = models.EmailField(
         unique=True,
     )
-    # Function for disabling bad actors
+    # way to disable bad actors
     is_active = models.BooleanField(default=True)
     # Password
     password = models.CharField(
