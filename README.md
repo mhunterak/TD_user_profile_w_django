@@ -8,16 +8,16 @@
 { Assuming you have Python 3.x installed }
 
 vituralenv setup:
-	> python3.7 -m venv /.venv
+>python3.7 -m venv /.venv
 
 activate vituralenv:
-	> source .venv/bin/activate
+>source .venv/bin/activate
 
 install requirements:
-	> pip3.7 install -r requirements.txt
+>pip3.7 install -r requirements.txt
 
 launch django application:
-	> python3.7 user_profile/manage.py runserver 0.0.0.0:8000
+>python3.7 user_profile/manage.py runserver 0.0.0.0:8000
 
 visit app in a browser:
-    > http://0.0.0.0:8000/ 
+>http://0.0.0.0:8000/ 
