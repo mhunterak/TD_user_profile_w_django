@@ -1,23 +1,16 @@
-# TD_user_profile_w_django
--Python Web Development Treehouse TechDegree: Project 7
+# User Profile with Django
 
-# I am aiming for the 'exceeds expectations' grade!
+Step to get the project running.
 
->by https://github.com/mhunterak
+1. Use the `requirements.txt` file to install the project dependencies.
 
-{ Assuming you have Python 3.x installed }
+2. Run your migrations to create the tables in the database.
+   `python manage.py migrate`
 
-vituralenv setup:
->python3.7 -m venv /.venv
+3. Run the server.
+   `python manage.py runserver`
 
-activate vituralenv:
->source .venv/bin/activate
 
-install requirements:
->pip3.7 install -r requirements.txt
+Once you add a Model with some fields or each time you make changes to the Model, make sure you run:
 
-launch django application:
->python3.7 user_profile/manage.py runserver 0.0.0.0:8000
-
-visit app in a browser:
->http://0.0.0.0:8000/ 
+`python manage.py makemigrations` to create an initial/new migration file inside the `migrations` folder for that `<app>`. So when you run the `migrate` command it knows how to setup or alter the database tables before data starts getting put in those tables.

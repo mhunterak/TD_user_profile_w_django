@@ -1,19 +1,67 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.models import User
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from .models import Account
+from .models import Profile
+from .forms import ProfileForm
 
-from django.contrib.auth import get_user_model
-User = get_user_model()
+# PROFILE
+@login_required
+def profile(request, pk):
+    user = User.objects.get(username=pk)
+    profile = Profile.objects.get(account=user)
+    return render(
+        request,
+        'accounts/profile.html',
+        {
+            'profile': profile,
+            'fields': profile.__itr__(),
+        }
+    )
+
+@login_required
+def edit_profile(request):
+    try:
+        profile = Profile.objects.get(account=request.user)
+        print('Profile recieved')
+        messages.add_message(request, 5, 'Profile recieved')
+    except Profile.DoesNotExist:
+        profile = Profile(account=request.user)
+        print('Profile created')
+        messages.add_message(request, 5, 'Profile created')
+
+    form = ProfileForm()
+    if request.method == 'POST':
+        form = ProfileForm(data=request.POST)
+        if form.is_valid():
+            profile = form.save(
+                commit=False
+            )
+            profile.account = request.user
+            profile.save()
+            print('profile updated!')
+            for field, val in profile:
+                print("{} : {}".format(
+                    field, val
+                    )
+                ) 
+    return render(
+        request, 
+        'accounts/edit_profile.html',
+        {
+            'form': form,
+            'profile': profile,
+            'fields': profile._meta.get_fields(),
+        }
+    )
 
 
-'''Authentication functions'''
-
-
+# AUTH ROUTES
 def sign_in(request):
     form = AuthenticationForm()
     if request.method == 'POST':
@@ -57,16 +105,7 @@ def sign_up(request):
             return HttpResponseRedirect(reverse('home'))  # TODO: go to profile
     return render(request, 'accounts/sign_up.html', {'form': form})
 
-
 def sign_out(request):
     logout(request)
     messages.success(request, "You've been signed out. Come back soon!")
     return HttpResponseRedirect(reverse('home'))
-
-
-'''Profile Views'''
-
-
-def profile(request, pk):
-    user = Account.objects.get(pk=pk)
-    return render(request, 'profile.html', {'user': user})

@@ -4,10 +4,10 @@ MASTER TODO LIST for User Profile project
 
 # DONE: Create a Django model for the user profile.
 # TODO: Add routes to display a profile,
-# edit a profile,
+# DONE: edit a profile,
 # and change the password.
 
-# TODO: Create a “profile” view to display a user profile
+# DONE: Create a “profile” view to display a user profile
 # with the following fields:
 # First Name,
 # Last Name,

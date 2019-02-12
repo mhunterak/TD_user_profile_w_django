@@ -22,7 +22,8 @@ from . import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include(
-        ('accounts.urls', 'accounts'), namespace='accounts')),
-    url(r'^$', views.home, name='home'),
+        ('accounts.urls', 'accounts'), namespace='accounts')
+    ),
+    url(r'', views.home, name='home'),
 ]
 urlpatterns += staticfiles_urlpatterns()

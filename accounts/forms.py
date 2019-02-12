@@ -1,17 +1,14 @@
 from django import forms
-
 from . import models
 
 
-class AccountForm(forms.ModelForm):
+class ProfileForm(forms.ModelForm):
     class Meta:
-        model = models.Account
+        model = models.Profile
         fields = [
             'first_name',
             'last_name',
             'email',
-            'password',
             'dob',
             'bio',
-            'avatar',
         ]
