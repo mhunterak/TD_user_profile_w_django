@@ -3,6 +3,12 @@ from django import forms
 from . import models
 
 
+class ImageForm(forms.ModelForm):
+    class Meta:
+        model = models.Profile
+        fields = ['avatar']
+
+
 class ProfileForm(forms.ModelForm):
     bio = forms.CharField(
         min_length=10,

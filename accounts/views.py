@@ -3,13 +3,15 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
+from django.core.files import File
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+import urllib
 
 
 from .models import Profile
-from .forms import ProfileForm
+from .forms import ProfileForm, ImageForm
 
 # PROFILE
 @login_required
@@ -123,14 +125,19 @@ def sign_out(request):
 
 @login_required
 def avatar_upload(request):
+    form = ImageForm()
     if request.method == 'POST':
-        form = ImageUploadForm(request.POST, request.FILES)
+        form = ImageForm(request.POST, request.FILES)
         if form.is_valid():
             profile = Profile.objects.get(pk=request.user)
-            profile.avatar = form.cleaned_data['image']
+            profile.avatar = request.FILES['avatar']
             profile.save()
             return HttpResponseRedirect(
-                        reverse(
-                            'accounts:profile', kwargs={'pk': user.username}
-                        )
+                reverse(
+                    'accounts:profile', kwargs={'pk': request.user.username})
             )
+    return render(request, 'accounts/update_avatar.html', {
+        'H1': 'Update Avatar',
+        'form': form,
+        }
+    )

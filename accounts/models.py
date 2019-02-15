@@ -31,4 +31,3 @@ class Profile(models.Model):
             else:
                 value = getattr(self, str(field_name).split('.')[2])
                 yield (str(field_name).split('.')[2], value)
-

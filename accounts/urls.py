@@ -9,6 +9,8 @@ from django.contrib.auth.views import (
     PasswordResetConfirmView,
     PasswordResetCompleteView
 )
+from django.conf import settings
+from django.conf.urls.static import static
 
 from . import views
 
@@ -26,6 +28,6 @@ urlpatterns = [
         success_url='accounts/change_password/done'),
         name="password_change"),
     path(r'change_password/done', PasswordChangeDoneView.as_view(),
-        name="change_password_done"),
-]
+         name="change_password_done"),
 
+]
