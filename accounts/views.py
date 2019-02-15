@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
+
 from .models import Profile
 from .forms import ProfileForm
 
@@ -19,8 +20,8 @@ def profile(request, pk):
         request,
         'accounts/profile.html',
         {
+            'user': user,
             'profile': profile,
-            'fields': profile.__itr__(),
         }
     )
 
@@ -35,7 +36,7 @@ def edit_profile(request):
         print('Profile created')
         messages.add_message(request, 5, 'Profile created')
 
-    form = ProfileForm()
+    form = ProfileForm(instance=profile)
     if request.method == 'POST':
         form = ProfileForm(data=request.POST)
         if form.is_valid():
@@ -49,7 +50,13 @@ def edit_profile(request):
                 print("{} : {}".format(
                     field, val
                     )
-                ) 
+                )
+                return HttpResponseRedirect(
+                    reverse('accounts:profile', kwargs={
+                        'pk': request.user.username,
+                        }
+                    )
+                )
     return render(
         request, 
         'accounts/edit_profile.html',
@@ -72,7 +79,9 @@ def sign_in(request):
                 if user.is_active:
                     login(request, user)
                     return HttpResponseRedirect(
-                        reverse('home')  # TODO: go to profile
+                        reverse(
+                            'accounts:profile', kwargs={'pk': user.username}
+                        )
                     )
                 else:
                     messages.error(
@@ -105,7 +114,23 @@ def sign_up(request):
             return HttpResponseRedirect(reverse('home'))  # TODO: go to profile
     return render(request, 'accounts/sign_up.html', {'form': form})
 
+
+@login_required
 def sign_out(request):
     logout(request)
     messages.success(request, "You've been signed out. Come back soon!")
     return HttpResponseRedirect(reverse('home'))
+
+@login_required
+def avatar_upload(request):
+    if request.method == 'POST':
+        form = ImageUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            profile = Profile.objects.get(pk=request.user)
+            profile.avatar = form.cleaned_data['image']
+            profile.save()
+            return HttpResponseRedirect(
+                        reverse(
+                            'accounts:profile', kwargs={'pk': user.username}
+                        )
+            )

@@ -5,14 +5,10 @@
     </div>
     <div class="grid-75">
         <h1>Edit Profile</h1>
-        {% for key, value in profile %}
-        {{ key }}: {{ value }} 
-        <br/>
-        {% endfor %}
         <form action="" method="POST">
             {% csrf_token %}
             {{ form }}
-            <input type="submit">
+            <input type="submit" value="Update">
         </form>
     </div>
 {% endblock %}

@@ -4,10 +4,16 @@
         nav here maybe?
     </div>
     <div class="grid-75">
-        <h1>Welcome!</h1>
+        <h1>{{ profile.account.username }}</h1>
+        {% if user.username == profile.account.username %}
+        <a href="{% url 'accounts:edit_profile'%}">
+            <h5>[ edit profile ]</h5>
+        </a>
+        {% endif %}
         <p>    
-            {% for field in fields %}     
-                {{ field }}<br/>
+            {% for key, value in profile %}
+            {{ key }}: {{ value }} 
+            <br/>
             {% endfor %}
         </p>
     </div>
