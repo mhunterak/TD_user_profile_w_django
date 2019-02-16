@@ -27,7 +27,7 @@ MASTER TODO LIST for User Profile project
 # Bio and
 # Avatar.
 
-# Validate user input "Date of Birth" field: 
+# Validate user input "Date of Birth" field:
 # check for a proper date format (YYYY-MM-DD, MM/DD/YYYY, or MM/DD/YY)
 # Validate user input "Email" field: check that
 # the email addresses match and are in a valid format.

@@ -1,16 +1,8 @@
 from django.urls import path
 from django.contrib.auth.views import (
-    LoginView,
-    LogoutView,
-    PasswordResetView,
-    PasswordResetDoneView,
     PasswordChangeView,
     PasswordChangeDoneView,
-    PasswordResetConfirmView,
-    PasswordResetCompleteView
 )
-from django.conf import settings
-from django.conf.urls.static import static
 
 from . import views
 
@@ -27,5 +19,4 @@ urlpatterns = [
         name="password_change"),
     path(r'change_password/done', PasswordChangeDoneView.as_view(),
          name="change_password_done"),
-
 ]
