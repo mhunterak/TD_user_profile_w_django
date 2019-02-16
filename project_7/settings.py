@@ -67,6 +67,11 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries':{
+                'app_filters': 'project_7.templatetags.app_filters',
+
+            }
+
         },
     },
 ]

@@ -3,41 +3,30 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
-from django.core.files import File
 from django.urls import reverse
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
-import urllib
-
+from django.shortcuts import render, get_object_or_404
 
 from .models import Profile
 from .forms import ProfileForm, ImageForm
 
 # PROFILE
+# Profile Crud - recall
 @login_required
 def profile(request, pk):
-    user = User.objects.get(username=pk)
-    profile = Profile.objects.get(account=user)
+    user = get_object_or_404(User, username=pk)
     return render(
         request,
         'accounts/profile.html',
         {
             'user': user,
-            'profile': profile,
         }
     )
 
+# Profile Crud - create/update
 @login_required
 def edit_profile(request):
-    try:
-        profile = Profile.objects.get(account=request.user)
-        print('Profile recieved')
-        messages.add_message(request, 5, 'Profile recieved')
-    except Profile.DoesNotExist:
-        profile = Profile(account=request.user)
-        print('Profile created')
-        messages.add_message(request, 5, 'Profile created')
-
+    profile = Profile.create_or_recall(request)
     form = ProfileForm(instance=profile)
     if request.method == 'POST':
         form = ProfileForm(data=request.POST)
@@ -47,25 +36,23 @@ def edit_profile(request):
             )
             profile.account = request.user
             profile.save()
-            print('profile updated!')
+            messages.success(request, 'profile updated!')
             for field, val in profile:
                 print("{} : {}".format(
                     field, val
                     )
                 )
-                return HttpResponseRedirect(
-                    reverse('accounts:profile', kwargs={
-                        'pk': request.user.username,
-                        }
-                    )
+            return HttpResponseRedirect(
+                reverse('accounts:profile', kwargs={
+                    'pk': request.user.username,
+                    }
                 )
+            )
     return render(
         request, 
         'accounts/edit_profile.html',
         {
             'form': form,
-            'profile': profile,
-            'fields': profile._meta.get_fields(),
         }
     )
 
@@ -114,7 +101,12 @@ def sign_up(request):
                 "You're now a user! You've been signed in, too."
             )
             return HttpResponseRedirect(reverse('home'))  # TODO: go to profile
-    return render(request, 'accounts/sign_up.html', {'form': form})
+    return render(request, 'accounts/sign_up.html',
+        {
+            'form': form,
+            'messages': messages,
+        },
+    )
 
 
 @login_required
@@ -132,10 +124,7 @@ def avatar_upload(request):
             profile = Profile.objects.get(pk=request.user)
             profile.avatar = request.FILES['avatar']
             profile.save()
-            return HttpResponseRedirect(
-                reverse(
-                    'accounts:profile', kwargs={'pk': request.user.username})
-            )
+        messages.success(request, 'Avatar Updated')
     return render(request, 'accounts/update_avatar.html', {
         'H1': 'Update Avatar',
         'form': form,

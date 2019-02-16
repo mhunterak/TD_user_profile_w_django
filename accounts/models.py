@@ -23,6 +23,13 @@ class Profile(models.Model):
     # Bio and
     bio = models.TextField()
 
+    def create_or_recall(request):
+        try:
+            profile = Profile.objects.get(account=request.user)
+        except Profile.DoesNotExist:
+            profile = Profile(account=request.user)
+        return profile
+
     def __iter__(self):
         for i, field_name in enumerate(self._meta.get_fields()):
             if i < 2:

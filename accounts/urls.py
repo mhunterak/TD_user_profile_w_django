@@ -20,9 +20,7 @@ urlpatterns = [
     path(r'sign_out', views.sign_out, name='sign_out'),
     path(r'edit', views.edit_profile, name='edit_profile'),
     path(r'user/<str:pk>', views.profile, name='profile'),
-
     path(r'avatar/upload', views.avatar_upload, name='avatar_upload'),
-
     # TODO: make a custom version of this
     path(r'change_password', PasswordChangeView.as_view(
         success_url='accounts/change_password/done'),

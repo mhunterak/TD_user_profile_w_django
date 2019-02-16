@@ -1,23 +1,26 @@
 {% extends 'layout.html' %}
+{% load app_filters %}
 {% block body %}
     <div class="grid-25">
         nav here maybe?
     </div>
     <div class="grid-75">
-        <img src="{{ settings.MEDIA_ROOT }}{{ profile.avatar.url }}">
-        <h1>{{ profile.account.username }}</h1>
-        {% if user.username == profile.account.username %}
+        {% if user.profile.avatar %}
+        <img src="{{ settings.MEDIA_ROOT }}{{ user.profile.avatar.url }}">
+        {% endif %}
+        <a href="{% url 'accounts:avatar_upload'%}">
+            <h5>[ update avatar ]</h5>
+        </a>
+        <h1>{{ user.profile.account.username }}</h1>
+        {% if user.username == user.profile.account.username %}
         <a href="{% url 'accounts:edit_profile'%}">
             <h5>[ edit profile ]</h5>
         </a>
-            <a href="{% url 'accounts:avatar_upload'%}">
-            <h5>[ update avatar ]</h5>
-        </a>
         {% endif %}
         <p>    
-            {% for key, value in profile %}
+            {% for key, value in user.profile %}
             {# TODO: mmake a custom filter to show display friendly keys #}
-            {{ key }}: {{ value }} 
+            {{ key | display_clean | title }}: {{ value }} 
             <br/>
             {% endfor %}
         </p>

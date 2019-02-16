@@ -37,7 +37,7 @@ MASTER TODO LIST for User Profile project
 # TODO: Use the supplied HTML/CSS to build and style the
 # profile page and bio page.
 
-# TODO: Add the ability to upload and save a user’s avatar image.
+# Add the ability to upload and save a user’s avatar image.
 
 # TODO: Create “change-password” view with the route
 # “/profile/change_password” that allows the user to update their password
