@@ -9,30 +9,25 @@ class Profile(models.Model):
         on_delete=models.CASCADE,
         primary_key=True,
     )
+    # Avatar
+    avatar = models.ImageField()
+
     # First Name,
-    first_name = models.CharField(
-        max_length=60,
-    )
+    first_name = models.CharField(max_length=60)
     # Last Name,
-    last_name = models.CharField(
-        max_length=60,
-    )
+    last_name = models.CharField(max_length=60)
     # Email,
-    email = models.CharField(
-        max_length=256,
-    )   
+    email = models.CharField(max_length=256)
     # Date of Birth,
     dob = models.DateField()
     # Bio and
     bio = models.TextField()
-    # Avatar
-    avatar = models.ImageField()
 
     def __iter__(self):
         for i, field_name in enumerate(self._meta.get_fields()):
-            if i == 0:
+            if i < 2:
+                # skip the account and avatar attributes
                 pass
             else:
                 value = getattr(self, str(field_name).split('.')[2])
                 yield (str(field_name).split('.')[2], value)
-
