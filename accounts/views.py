@@ -14,46 +14,49 @@ from .forms import ProfileForm, ImageForm
 
 
 # PROFILE #
+
+
 # Profile Crud - recall
 def profile(request, pk):
     '''
 Shows any user's profile
-
 no login required
     '''
     user = get_object_or_404(User, username=pk)
     return render(
         request,
         'accounts/profile.html',
-        {
-            'user': user,
-        }
+        {'profile': user.profile}
     )
 
-# Profile Crud - create/update
+
+# Bio
+def bio(request, pk):
+    '''
+Shows any user's profile
+no login required
+    '''
+    user = get_object_or_404(User, username=pk)
+    return render(
+        request,
+        'accounts/bio.html',
+        {'profile': user.profile}
+    )
+
+# Profile - create/update
 @login_required
 def edit_profile(request):
     '''
 Edits a user's own profile
-
 login required
     '''
     profile = Profile.create_or_recall(request)
     form = ProfileForm(instance=profile)
     if request.method == 'POST':
-        form = ProfileForm(data=request.POST)
+        form = ProfileForm(data=request.POST, instance=profile)
         if form.is_valid():
-            profile = form.save(
-                commit=False
-            )
-            profile.account = request.user
-            profile.save()
+            profile = form.save()
             messages.success(request, 'profile updated!')
-            for field, val in profile:
-                print("{} : {}".format(
-                    field, val
-                    )
-                )
             return HttpResponseRedirect(
                 reverse('accounts:profile', kwargs={
                     'pk': request.user.username,
@@ -63,14 +66,37 @@ login required
     return render(
         request,
         'accounts/edit_profile.html',
-        {
-            'form': form,
+        {'form': form}
+    )
+
+
+@login_required
+def avatar_upload(request):
+    '''
+Adds the ability to upload and save a user’s avatar image
+    '''
+    form = ImageForm()
+    if request.method == 'POST':
+        form = ImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            profile = Profile.objects.get(pk=request.user)
+            profile.avatar = request.FILES['avatar']
+            profile.save()
+        messages.success(request, 'Avatar Updated')
+    return render(request, 'accounts/update_avatar.html', {
+        'H1': 'Update Avatar',
+        'form': form,
         }
     )
 
 
 # AUTH ROUTES #
+
+
 def sign_up(request):
+    '''
+Creates a new user account, and get sign in to the new account
+    '''
     form = UserCreationForm()
     if request.method == 'POST':
         form = UserCreationForm(data=request.POST)
@@ -88,16 +114,13 @@ def sign_up(request):
             return HttpResponseRedirect(reverse('accounts:profile', kwargs={
                     'pk': request.user.username,
                     }))
-    return render(
-        request, 'accounts/sign_up.html',
-        {
-            'form': form,
-            'messages': messages,
-        },
-    )
+    return render(request, 'accounts/sign_up.html', {'form': form})
 
 
 def sign_in(request):
+    '''
+Signs in a user with an authenticated password
+    '''
     form = AuthenticationForm()
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
@@ -127,26 +150,14 @@ def sign_in(request):
 
 @login_required
 def sign_out(request):
+    '''
+Signs out a user
+    '''
     logout(request)
     messages.success(request, "You've been signed out. Come back soon!")
     return HttpResponseRedirect(reverse('home'))
 
-
-@login_required
-def avatar_upload(request):
+def change_password(request):
     '''
-Adds the ability to upload and save a user’s avatar image.
+this route allows a user to reset their password
     '''
-    form = ImageForm()
-    if request.method == 'POST':
-        form = ImageForm(request.POST, request.FILES)
-        if form.is_valid():
-            profile = Profile.objects.get(pk=request.user)
-            profile.avatar = request.FILES['avatar']
-            profile.save()
-        messages.success(request, 'Avatar Updated')
-    return render(request, 'accounts/update_avatar.html', {
-        'H1': 'Update Avatar',
-        'form': form,
-        }
-    )

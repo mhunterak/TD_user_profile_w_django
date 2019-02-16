@@ -1,0 +1,15 @@
+/*
+Custom styles for User Profile
+*/
+.center {
+	margin: auto;
+	text-align: center;
+}
+
+.grid-75 img {
+	border-radius: 50%;
+	max-height: 100%;
+	max-width: 100%;
+	max-height: 300px;
+	max-width: 300px;
+}

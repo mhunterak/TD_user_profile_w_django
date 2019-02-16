@@ -1,24 +1,21 @@
 {% extends 'layout.html' %}
 {% block body %}
+<div class="grid-75">
+    <h1>Edit Profile -
+        <a href="{% url 'accounts:profile' pk=user.username %}">
+            {{ user.username }}
+        </a>
+    </h1>
+    {% if user.profile.avatar %}
     <div class="grid-25">
-        nav here maybe?
-    </div>
-    <div class="grid-75">
-        <h1>Edit Profile - 
-            <a href="{% url 'accounts:profile' pk=user.username %}">
-                {{ user.username }}
-            </a>
-        </h1>
-        {% if user.profile.avatar %}
         <img src="{{ settings.MEDIA_ROOT }}{{ user.profile.avatar.url }}">
-        {% endif %}
-            <a href="{% url 'accounts:avatar_upload'%}">
-                <h5>[ update avatar ]</h5>
-            </a>
+    </div>
+    {% endif %}
+    <div class="grid-75">
         <form action="" method="POST">
             {% csrf_token %}
             {{ form }}
             <input type="submit" value="Update">
         </form>
     </div>
-{% endblock %}
+    {% endblock %}
