@@ -22,6 +22,7 @@
     <!-- CSS
     –––––––––––––––––––––––––––––––––––––––––––––––––– -->
     <link rel="stylesheet" href="{% static "css/global.css" %}">
+    <link rel="stylesheet" href="{% static "css/style.css" %}">
 
     <!-- JS
     –––––––––––––––––––––––––––––––––––––––––––––––––– -->
@@ -45,10 +46,7 @@
             <div class="circle--fluid--cell circle--fluid--primary">
                 <nav>
                     <ul class="circle--inline">
-                        {% if user.is_authenticated %}
-                        <li><a href="{% url 'accounts:profile' pk=user.get_username %}">My Profile</a></li>
-                        {% endif %}
-                        <li><a href="#">here?</a></li>
+                        <li><a href="/">Circle</a></li>
                     </ul>
                 </nav>
             </div>
@@ -80,6 +78,32 @@
             {% endfor %}
         </ul>
     {% endif %}
+    <div class="grid-25">
+    {% if user.is_authenticated %}
+    <ul>
+        <li>
+            <a href="{% url 'accounts:profile' pk=user.username %}">
+                My Profile
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'accounts:edit_profile' %}">
+                Edit Profile
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'accounts:avatar_upload'%}">
+                Upload Avatar
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'accounts:change_password'%}">
+                Change Password
+            </a>
+        </li>
+    </ul>
+    {% endif %}
+    </div>    
     {% block body %}{% endblock %}
 </div>
 </body>

@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+{% load app_filters %}
+{% block body %}
+<div class="grid-75">
+    <div class="grid-65">
+        <p>
+            <h1>
+                {{ profile.first_name }}
+                {{ profile.last_name }}
+            </h1>
+            <p>
+                {{ profile.bio }}
+                <br />
+                <a href="{% url 'accounts:profile' pk=profile.account.username %}">
+                    [ Profile ]
+                </a>
+            </p>
+        </p>
+    </div>
+    <div class="grid-35 center">
+        <p>
+            <h4>
+                {% if profile.avatar %}
+                <img src="{{ settings.MEDIA_ROOT }}{{ profile.avatar.url }}">
+                {% else %}
+                <a href="{% url 'accounts:avatar_upload'%}">
+                    [ Upload Avatar ]
+                </a>
+                {% endif %}
+                <br />
+                {{ profile.account.username }}
+            </h4>
+        </p>
+    </div>
+</div>
+{% endblock %}

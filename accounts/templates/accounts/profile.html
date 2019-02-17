@@ -1,25 +1,52 @@
 {% extends 'layout.html' %}
+{% load app_filters %}
 {% block body %}
-    <div class="grid-25">
-        nav here maybe?
-    </div>
-    <div class="grid-75">
-        <img src="{{ settings.MEDIA_ROOT }}{{ profile.avatar.url }}">
-        <h1>{{ profile.account.username }}</h1>
-        {% if user.username == profile.account.username %}
-        <a href="{% url 'accounts:edit_profile'%}">
-            <h5>[ edit profile ]</h5>
-        </a>
-            <a href="{% url 'accounts:avatar_upload'%}">
-            <h5>[ update avatar ]</h5>
-        </a>
-        {% endif %}
-        <p>    
-            {% for key, value in profile %}
-            {# TODO: mmake a custom filter to show display friendly keys #}
-            {{ key }}: {{ value }} 
-            <br/>
-            {% endfor %}
+<div class="grid-75">
+    <div class="grid-35 center">
+        <p>
+            <h4>
+                {% if profile.avatar %}
+                <img src="{{ settings.MEDIA_ROOT }}{{ profile.avatar.url }}">
+                {% else %}
+                <a href="{% url 'accounts:avatar_upload'%}">
+                    [ Upload Avatar ]
+                </a>
+                {% endif %}
+                <br />
+                {{ profile.account.username }}
+            </h4>
         </p>
     </div>
+    <div class="grid-65">
+        <p>
+            <h1>
+                N:
+                {{ profile.first_name }}
+                {{ profile.last_name }}
+            </h1>
+            <h2>
+                E:
+                <a href="mailto:{{ profile.email }}">
+                    {{ profile.email }}</a>
+                <br />
+                GH:
+                <a href="https://github.com/{{ profile.github }}" target="_blank">
+                    github.com/{{ profile.github }}</a>
+                <br />
+                LI:
+                <a href="https://www.linkedin.com/in/{{ profile.linkedin }}/" target="_blank">
+                    linkedin.com/in/{{ profile.linkedin }}</a>
+            </h2>
+            <h3>
+                Specialty: {{ profile.specialty | title }}
+                <br />
+                Dob: {{ profile.dob }}
+                <br />
+                <a href="{% url 'accounts:bio' pk=profile.account.username %}">
+                    [ Bio ]
+                </a>
+            </h3>
+        </p>
+    </div>
+</div>
 {% endblock %}

@@ -1,77 +1,133 @@
+# Native libraries
+# 3rd party imports
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import (
+    authenticate, login, logout, update_session_auth_hash)
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import (
+    AuthenticationForm, UserCreationForm, PasswordChangeForm)
 from django.contrib.auth.models import User
-from django.core.files import File
 from django.urls import reverse
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
-import urllib
-
-
+from django.shortcuts import render, get_object_or_404
+# Custom modules
 from .models import Profile
 from .forms import ProfileForm, ImageForm
 
-# PROFILE
-@login_required
+
+# PROFILE #
+
+
+# Profile Crud - recall
 def profile(request, pk):
-    user = User.objects.get(username=pk)
-    profile = Profile.objects.get(account=user)
+    '''
+Shows any user's profile
+no login required
+    '''
+    user = get_object_or_404(User, username=pk)
+    Profile.create_or_recall(user)
     return render(
         request,
         'accounts/profile.html',
-        {
-            'user': user,
-            'profile': profile,
-        }
+        {'profile': user.profile}
     )
 
+
+# Bio
+def bio(request, pk):
+    '''
+Shows any user's profile
+no login required
+    '''
+    user = get_object_or_404(User, username=pk)
+    return render(
+        request,
+        'accounts/bio.html',
+        {'profile': user.profile}
+    )
+
+# Profile - create/update
 @login_required
 def edit_profile(request):
-    try:
-        profile = Profile.objects.get(account=request.user)
-        print('Profile recieved')
-        messages.add_message(request, 5, 'Profile recieved')
-    except Profile.DoesNotExist:
-        profile = Profile(account=request.user)
-        print('Profile created')
-        messages.add_message(request, 5, 'Profile created')
-
+    '''
+Edits a user's own profile
+login required
+    '''
+    profile = Profile.create_or_recall(request.user)
     form = ProfileForm(instance=profile)
     if request.method == 'POST':
-        form = ProfileForm(data=request.POST)
+        form = ProfileForm(data=request.POST, instance=profile)
         if form.is_valid():
-            profile = form.save(
-                commit=False
+            profile = form.save()
+            messages.success(request, 'profile updated!')
+            return HttpResponseRedirect(
+                reverse('accounts:profile', kwargs={
+                    'pk': request.user.username,
+                    }
+                )
             )
-            profile.account = request.user
-            profile.save()
-            print('profile updated!')
-            for field, val in profile:
-                print("{} : {}".format(
-                    field, val
-                    )
-                )
-                return HttpResponseRedirect(
-                    reverse('accounts:profile', kwargs={
-                        'pk': request.user.username,
-                        }
-                    )
-                )
     return render(
-        request, 
+        request,
         'accounts/edit_profile.html',
-        {
-            'form': form,
-            'profile': profile,
-            'fields': profile._meta.get_fields(),
+        {'form': form}
+    )
+
+
+@login_required
+def avatar_upload(request):
+    '''
+Adds the ability to upload and save a user’s avatar image
+    '''
+    form = ImageForm()
+    if request.method == 'POST':
+        form = ImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            profile = Profile.objects.get(pk=request.user)
+            profile.avatar = request.FILES['avatar']
+            profile.save()
+        messages.success(request, 'Avatar Updated')
+    return render(request, 'accounts/update_avatar.html', {
+        'H1': 'Update Avatar',
+        'form': form,
         }
     )
 
 
-# AUTH ROUTES
+# AUTH ROUTES #
+
+
+def sign_up(request):
+    '''
+Creates a new user account, and get sign in to the new account
+    '''
+    form = UserCreationForm()
+    if request.method == 'POST':
+        form = UserCreationForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            user = authenticate(
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password1']
+            )
+            login(request, user)
+            messages.success(
+                request,
+                "You're now a user! You've been signed in, too."
+            )
+            messages.success(
+                request,
+                "Why not get started by editing your profile?"
+            )
+            return HttpResponseRedirect(reverse('accounts:profile', kwargs={
+                    'pk': request.user.username,
+                    }))
+    return render(request, 'accounts/sign_up.html', {'form': form})
+
+
 def sign_in(request):
+    '''
+Signs in a user with an authenticated password
+    '''
     form = AuthenticationForm()
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
@@ -82,7 +138,8 @@ def sign_in(request):
                     login(request, user)
                     return HttpResponseRedirect(
                         reverse(
-                            'accounts:profile', kwargs={'pk': user.username}
+                            'accounts:profile',
+                            kwargs={'pk': user.username}
                         )
                     )
                 else:
@@ -98,46 +155,27 @@ def sign_in(request):
     return render(request, 'accounts/sign_in.html', {'form': form})
 
 
-def sign_up(request):
-    form = UserCreationForm()
-    if request.method == 'POST':
-        form = UserCreationForm(data=request.POST)
-        if form.is_valid():
-            form.save()
-            user = authenticate(
-                username=form.cleaned_data['username'],
-                password=form.cleaned_data['password1']
-            )
-            login(request, user)
-            messages.success(
-                request,
-                "You're now a user! You've been signed in, too."
-            )
-            return HttpResponseRedirect(reverse('home'))  # TODO: go to profile
-    return render(request, 'accounts/sign_up.html', {'form': form})
-
-
 @login_required
 def sign_out(request):
+    '''
+Signs out a user
+    '''
     logout(request)
     messages.success(request, "You've been signed out. Come back soon!")
     return HttpResponseRedirect(reverse('home'))
 
-@login_required
-def avatar_upload(request):
-    form = ImageForm()
+
+def change_password(request):
+    '''
+this route allows a user to reset their password
+    '''
+    form = PasswordChangeForm(request.user)
     if request.method == 'POST':
-        form = ImageForm(request.POST, request.FILES)
+        form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
-            profile = Profile.objects.get(pk=request.user)
-            profile.avatar = request.FILES['avatar']
-            profile.save()
-            return HttpResponseRedirect(
-                reverse(
-                    'accounts:profile', kwargs={'pk': request.user.username})
-            )
-    return render(request, 'accounts/update_avatar.html', {
-        'H1': 'Update Avatar',
-        'form': form,
-        }
-    )
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Your password was updated!')
+    return render(request, 'accounts/default_w_form.html', {
+        'H1': 'Change Password',
+        'form': form})
