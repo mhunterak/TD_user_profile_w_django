@@ -80,6 +80,7 @@
     {% endif %}
     <div class="grid-25">
     {% if user.is_authenticated %}
+    <ul>
         <li>
             <a href="{% url 'accounts:profile' pk=user.username %}">
                 My Profile
@@ -95,6 +96,12 @@
                 Upload Avatar
             </a>
         </li>
+        <li>
+            <a href="{% url 'accounts:change_password'%}">
+                Change Password
+            </a>
+        </li>
+    </ul>
     {% endif %}
     </div>    
     {% block body %}{% endblock %}

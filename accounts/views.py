@@ -1,9 +1,11 @@
 # Native libraries
 # 3rd party imports
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import (
+    authenticate, login, logout, update_session_auth_hash)
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import (
+    AuthenticationForm, UserCreationForm, PasswordChangeForm)
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.http import HttpResponseRedirect
@@ -23,6 +25,7 @@ Shows any user's profile
 no login required
     '''
     user = get_object_or_404(User, username=pk)
+    Profile.create_or_recall(user)
     return render(
         request,
         'accounts/profile.html',
@@ -50,7 +53,7 @@ def edit_profile(request):
 Edits a user's own profile
 login required
     '''
-    profile = Profile.create_or_recall(request)
+    profile = Profile.create_or_recall(request.user)
     form = ProfileForm(instance=profile)
     if request.method == 'POST':
         form = ProfileForm(data=request.POST, instance=profile)
@@ -111,6 +114,10 @@ Creates a new user account, and get sign in to the new account
                 request,
                 "You're now a user! You've been signed in, too."
             )
+            messages.success(
+                request,
+                "Why not get started by editing your profile?"
+            )
             return HttpResponseRedirect(reverse('accounts:profile', kwargs={
                     'pk': request.user.username,
                     }))
@@ -157,7 +164,18 @@ Signs out a user
     messages.success(request, "You've been signed out. Come back soon!")
     return HttpResponseRedirect(reverse('home'))
 
+
 def change_password(request):
     '''
 this route allows a user to reset their password
     '''
+    form = PasswordChangeForm(request.user)
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Your password was updated!')
+    return render(request, 'accounts/default_w_form.html', {
+        'H1': 'Change Password',
+        'form': form})

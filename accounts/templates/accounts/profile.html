@@ -7,6 +7,10 @@
             <h4>
                 {% if profile.avatar %}
                 <img src="{{ settings.MEDIA_ROOT }}{{ profile.avatar.url }}">
+                {% else %}
+                <a href="{% url 'accounts:avatar_upload'%}">
+                    [ Upload Avatar ]
+                </a>
                 {% endif %}
                 <br />
                 {{ profile.account.username }}
@@ -41,9 +45,7 @@
                 <a href="{% url 'accounts:bio' pk=profile.account.username %}">
                     [ Bio ]
                 </a>
-                </h4>
-                <h5>
-                </h5>
+            </h3>
         </p>
     </div>
 </div>

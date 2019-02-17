@@ -49,14 +49,14 @@ to recall the image in a template, use:
     # no ' ', '-', or special chars
     linkedin = models.CharField(default="", max_length=100)
 
-    def create_or_recall(request):
+    def create_or_recall(user):
         '''
 this method returns an existing profile, or creates and returns new profile
         '''
         try:
-            profile = Profile.objects.get(account=request.user)
+            profile = Profile.objects.get(account=user)
         except Profile.DoesNotExist:
-            profile = Profile(account=request.user)
+            profile = Profile(account=user)
         return profile
 
     def __iter__(self):

@@ -22,9 +22,13 @@
             <h4>
                 {% if profile.avatar %}
                 <img src="{{ settings.MEDIA_ROOT }}{{ profile.avatar.url }}">
+                {% else %}
+                <a href="{% url 'accounts:avatar_upload'%}">
+                    [ Upload Avatar ]
+                </a>
                 {% endif %}
-                {{ profile.account.username }}
                 <br />
+                {{ profile.account.username }}
             </h4>
         </p>
     </div>
