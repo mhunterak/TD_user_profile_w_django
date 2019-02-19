@@ -18,6 +18,13 @@ class ProfileForm(forms.ModelForm):
         min_length=10,
         widget=forms.Textarea(
             attrs={'placeholder': "Tell your story"}))
+    dob = forms.DateField(
+        widget=forms.DateInput(
+            attrs={
+                'placeholder': "use format MM/DD/YYYY",
+            }
+        )
+    )
     email = forms.EmailField(
         validators=[],
         error_messages={
