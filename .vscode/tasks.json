@@ -6,7 +6,7 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "source .env/bin/activate && python manage.py runserver",
+            "command": "source .env/bin/activate && python manage.py migrate && python manage.py runserver",
             "group": {
                 "kind": "build",
                 "isDefault": true
