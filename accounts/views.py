@@ -63,7 +63,7 @@ login required
             return HttpResponseRedirect(
                 reverse('accounts:profile', kwargs={
                     'pk': request.user.username,
-                    }
+                }
                 )
             )
     return render(
@@ -89,7 +89,7 @@ Adds the ability to upload and save a user’s avatar image
     return render(request, 'accounts/update_avatar.html', {
         'H1': 'Update Avatar',
         'form': form,
-        }
+    }
     )
 
 
@@ -118,9 +118,7 @@ Creates a new user account, and get sign in to the new account
                 request,
                 "Why not get started by editing your profile?"
             )
-            return HttpResponseRedirect(reverse('accounts:profile', kwargs={
-                    'pk': request.user.username,
-                    }))
+            return HttpResponseRedirect(reverse('accounts:edit_profile'))
     return render(request, 'accounts/sign_up.html', {'form': form})
 
 

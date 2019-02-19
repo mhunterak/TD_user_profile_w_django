@@ -95,7 +95,7 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'accounts.validators.NameNotInPassword',
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
@@ -104,22 +104,12 @@ AUTH_PASSWORD_VALIDATORS = [
         }
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME': 'accounts.validators.NotSamePassword',
     },
     {
-        'NAME': 'accounts.validators.NotSamePassword', 
-    },
-    {
-        'NAME': 'accounts.validators.UpperAndLowerCase', 
-    },
-    {
-        'NAME': 'accounts.validators.ContainsNumbers', 
-    },
-    {
-        'NAME': 'accounts.validators.ContainsSpecialChar', 
+        'NAME': 'accounts.validators.ContainsUpperLowerNumberSpecial',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
