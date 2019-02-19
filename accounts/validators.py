@@ -24,7 +24,7 @@ class UpperAndLowerCase(object):
     def validate(self, password, user=None):
         has_lower = False
         has_upper = False
-        for letter in password.split(''):
+        for letter in list(password):
             while not has_lower:
                 if re.match('[a-z]', password):
                     has_lower = True
@@ -46,7 +46,7 @@ class UpperAndLowerCase(object):
 class ContainsNumbers(object):
     def validate(self, password, user=None):
         numberOfDigits = 0
-        for letter in password.split(''):
+        for letter in list(password):
             if letter.isdigit():
                 numberOfDigits += 1
         if numberOfDigits == 0:
@@ -62,7 +62,7 @@ class ContainsNumbers(object):
 class ContainsSpecialChar(object):
     def validate(self, password, user=None):
         numberOfSpecialChar = 0
-        for letter in password.split(''):
+        for letter in list(password):
             if letter in set(punctuation):
                 numberOfSpecialChar += 1
         if numberOfSpecialChar == 0:
