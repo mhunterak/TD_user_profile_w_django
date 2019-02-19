@@ -54,9 +54,10 @@ Edits a user's own profile
 login required
     '''
     profile = Profile.create_or_recall(request.user)
-    form = ProfileForm(instance=profile)
     if request.method == 'POST':
-        form = ProfileForm(data=request.POST, instance=profile)
+        form = ProfileForm(
+            data=request.POST,
+            instance=profile)
         if form.is_valid():
             profile = form.save()
             messages.success(request, 'profile updated!')
@@ -66,6 +67,9 @@ login required
                 }
                 )
             )
+    data = profile.__dict__
+    data['email'] = ''
+    form = ProfileForm(instance=profile, data=data)
     return render(
         request,
         'accounts/edit_profile.html',

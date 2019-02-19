@@ -1,5 +1,4 @@
 import re
-from string import punctuation
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
@@ -53,7 +52,7 @@ class NameNotInPassword(object):
             print("{} flags".format(flag))
             raise ValidationError(
                 _("Your Password cannot contain user name or parts of the full name."),
-                code='contains_namw',
+                code='contains_name',
             )
 
     def get_help_text(self):

@@ -1,4 +1,6 @@
 from django import forms
+from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 
 from . import models
 
@@ -16,7 +18,12 @@ class ProfileForm(forms.ModelForm):
         min_length=10,
         widget=forms.Textarea(
             attrs={'placeholder': "Tell your story"}))
-    email = forms.EmailField()
+    email = forms.EmailField(
+        validators=[],
+        error_messages={
+            'required': (
+                'Please verify your email address to make changes')},
+    )
     specialty = forms.CharField(
         widget=forms.TextInput(
             attrs={'placeholder': "What's your weapon of choice?"}))
@@ -27,12 +34,18 @@ class ProfileForm(forms.ModelForm):
         widget=forms.TextInput(
             attrs={'placeholder': "Enter linkedin.com/in/[THIS_PART]"}))
 
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if not email == self.instance.email:
+            raise ValidationError("please verify your email address")
+        return email
+
     class Meta:
         model = models.Profile
         fields = [
+            'email',
             'first_name',
             'last_name',
-            'email',
             'dob',
             'specialty',
             'github',
