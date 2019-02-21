@@ -39,7 +39,7 @@ to recall the image in a template, use:
     # Date of Birth
     dob = models.DateField()
     # Bio
-    bio = models.TextField()
+    bio = models.TextField(default="Enter your Bio here!")
 
     # Specialty (ex. python, javascript)
     specialty = models.CharField(default="", max_length=32)
@@ -56,7 +56,7 @@ this method returns an existing profile, or creates and returns new profile
         try:
             profile = Profile.objects.get(account=user)
         except Profile.DoesNotExist:
-            profile = Profile(account=user)
+            profile = Profile(account=user).save()
         return profile
 
     def __iter__(self):

@@ -67,7 +67,10 @@ login required
                 }
                 )
             )
-    data = profile.__dict__
+    try:
+        data = profile.__dict__
+    except AttributeError:
+        data = {}
     data['email'] = ''
     form = ProfileForm(instance=profile, data=data)
     return render(

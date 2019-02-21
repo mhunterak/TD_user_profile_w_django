@@ -36,7 +36,7 @@ class ProfileForm(forms.ModelForm):
             attrs={'placeholder': "What's your weapon of choice?"}))
     github = forms.CharField(
         widget=forms.TextInput(
-            attrs={'placeholder': "Just user your @username"}))
+            attrs={'placeholder': "Just user your GitHub @username"}))
     linkedin = forms.CharField(
         widget=forms.TextInput(
             attrs={'placeholder': "Enter linkedin.com/in/[THIS_PART]"}))
