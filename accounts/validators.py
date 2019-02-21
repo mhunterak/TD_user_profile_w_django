@@ -44,15 +44,18 @@ class NameNotInPassword(object):
         flag = 0
         if user.username in password:
             flag += 1
+            print('username in password flag')
         try:
             profile = Profile.objects.get(user)
             if profile.first_name != "":
                 if re.match(profile.first_name, password):
+                    print('firstname in password flag')
                     flag += 1
             if profile.last_name != "":
                 if re.match(profile.last_name, password):
+                    print('lastname in password flag')
                     flag += 1
-        except (TypeError, Profile.DoesNotExist) as e:
+        except (TypeError, Profile.DoesNotExist):
             '''
             If they don't have a profile yet, I think it's okay to skip
             this password validation test.

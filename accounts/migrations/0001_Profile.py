@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('last_name', models.CharField(max_length=60)),
                 ('email', models.CharField(max_length=256)),
                 ('dob', models.DateField(null=True,)),
-                ('bio', models.TextField()),
+                ('bio', models.TextField(default='Enter your Bio here!')),
                 ('avatar', models.ImageField(upload_to='')),
                 ('account', models.ForeignKey(
                     on_delete=django.db.models.deletion.CASCADE,

@@ -37,7 +37,7 @@ to recall the image in a template, use:
     # Email
     email = models.CharField(max_length=256)
     # Date of Birth
-    dob = models.DateField()
+    dob = models.DateField(null=True)
     # Bio
     bio = models.TextField(default="Enter your Bio here!")
 

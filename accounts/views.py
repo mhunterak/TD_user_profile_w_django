@@ -53,19 +53,24 @@ def edit_profile(request):
 Edits a user's own profile
 login required
     '''
-    profile = Profile.create_or_recall(request.user)
+    try:
+        profile = Profile.objects.get(account=request.user)
+    except (Profile.DoesNotExist, UnboundLocalError):
+        profile = None
     if request.method == 'POST':
         form = ProfileForm(
             data=request.POST,
             instance=profile)
         if form.is_valid():
-            profile = form.save()
+            profile = form.save(commit=False)
+            profile.account = request.user
+            profile.save()
+            print('Profile Saved')
             messages.success(request, 'profile updated!')
             return HttpResponseRedirect(
                 reverse('accounts:profile', kwargs={
                     'pk': request.user.username,
-                }
-                )
+                })
             )
     try:
         data = profile.__dict__
@@ -116,6 +121,7 @@ Creates a new user account, and get sign in to the new account
                 username=form.cleaned_data['username'],
                 password=form.cleaned_data['password1']
             )
+            # TODO: create user profile here, and then save email?
             login(request, user)
             messages.success(
                 request,
