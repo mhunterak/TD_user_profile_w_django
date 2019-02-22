@@ -4,7 +4,9 @@ ACCOUNT VIEWS
 views for auth routes, and updating account profiles
 '''
 # Native libraries
+import os
 # 3rd party imports
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import (
     authenticate, login, logout, update_session_auth_hash)
@@ -13,8 +15,10 @@ from django.contrib.auth.forms import (
     AuthenticationForm, UserCreationForm, PasswordChangeForm)
 from django.contrib.auth.models import User
 from django.urls import reverse
+
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
+from PIL import Image, ExifTags
 # Custom modules
 from .models import Profile
 from .forms import ProfileForm, ImageForm, EmailForm
@@ -127,6 +131,9 @@ def edit_profile(request):
     )
 
 
+# AVATAR
+
+
 @login_required
 def avatar_upload(request):
     '''Adds the ability to upload and save a user’s avatar image'''
@@ -139,10 +146,34 @@ def avatar_upload(request):
             profile = Profile.objects.get(pk=request.user)
             profile.avatar = request.FILES['avatar']
             profile.save()
-        messages.success(request, 'Avatar Updated')
+        messages.success(request, 'Avatar Uploaded')
     return render(request, 'accounts/update_avatar.html', {
         'H1': 'Update Avatar',
         'form': form, })
+
+
+@login_required
+def avatar_manipulate(request, pk):
+    '''This function handles all image manipulation with PIL'''
+
+    if pk not in ['left', 'right', 'vert', 'horz']:
+        # these are acceptable parameters, anything else gets rejected.
+        raise ValueError("I'm afraid I can't let you do that, Dave.")
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    filepath = BASE_DIR + request.user.profile.avatar.url
+    print(filepath)
+    image = Image.open(filepath)
+    if pk == "left":
+        image = image.rotate(90, expand=True)
+    if pk == "right":
+        image = image.rotate(270, expand=True)
+    if pk == "vert":
+        image = image.transpose(Image.FLIP_TOP_BOTTOM)
+    if pk == "horz":
+        image = image.transpose(Image.FLIP_LEFT_RIGHT)
+    image.save(filepath)
+    image.close()
+    return HttpResponseRedirect(reverse('accounts:avatar_upload'))
 
 
 # AUTH ROUTES #

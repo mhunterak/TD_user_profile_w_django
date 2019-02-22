@@ -11,6 +11,8 @@ urlpatterns = [
     path(r'user/<str:pk>', views.profile, name='profile'),
     path(r'bio/<str:pk>', views.bio, name='bio'),
     path(r'avatar/upload', views.avatar_upload, name='avatar_upload'),
+    path(r'avatar/rotate/<str:pk>',
+         views.avatar_manipulate, name='avatar_manipulate'),
     path(r'change_password', views.change_password, name='change_password'),
     path(r'provide_email', views.provide_email, name='provide_email'),
 ]

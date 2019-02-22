@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_wysiwyg',
     'accounts',
 ]
 
@@ -132,3 +133,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'assets'),
 ]
+
+# Requires you to also place the ckeditor files here:
+DJANGO_WYSIWYG_FLAVOR = 'yui'       # Default
+DJANGO_WYSIWYG_MEDIA_URL = STATIC_URL + "yui/"

@@ -1,14 +1,27 @@
 {% extends 'layout.html' %}
 {% block body %}
-    <div class="grid-75 centered">
-        <h1>{{ H1 }}</h1>
-        {% if user.profile.avatar %}
-        <img src="{{ settings.MEDIA_ROOT }}{{ user.profile.avatar.url }}">
-        {% endif %}
-        <form action="" method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form }}
-            <input type="submit" value="Update">
-        </form>
+    <div class="grid-100 centered" style="margin:auto;">
+        <div class="grid-100 centered">
+            
+            <h1>{{ H1 }}</h1>
+            {% if user.profile.avatar %}
+            <img src="{{ settings.MEDIA_ROOT }}{{ user.profile.avatar.url }}">
+            {% endif %}
+        </div>
+        <div class="grid-100 centered">
+            <a href="{% url 'accounts:avatar_manipulate' pk="left" %}">Rotate Left</a>
+            <a href="{% url 'accounts:avatar_manipulate' pk="horz" %}">Flip Horizontal</a>
+            <a href="#">Crop</a>
+            <a href="{% url 'accounts:avatar_manipulate' pk="vert" %}">Flip Vertical</a>
+            <a href="{% url 'accounts:avatar_manipulate' pk="right" %}">Rotate Right</a>
+
+        </div>
+        <div class="grid-100 centered">
+            <form action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form }}
+                <input type="submit" value="Update">
+            </form>
+        </div>
     </div>
 {% endblock %}

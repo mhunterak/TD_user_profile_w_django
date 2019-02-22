@@ -1,4 +1,11 @@
 {% extends 'layout.html' %}
+
+{% load wysiwyg %}
+
+{% block head %}
+{% wysiwyg_setup %}
+{% endblock %}
+
 {% block body %}
 <div class="grid-75 centered">
     <h1>Edit Profile -
@@ -18,4 +25,5 @@
             <input type="submit" value="Update">
         </form>
     </div>
-    {% endblock %}
+    {% wysiwyg_editor "id_bio" %}
+{% endblock %}

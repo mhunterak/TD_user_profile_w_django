@@ -66,7 +66,8 @@ MASTER TODO LIST for User Profile project
 #   favorite animal or hobby
 # JavaScript is utilized for a date dropdown
 # for the Date of Birth validation feature.
-# JavaScript is utilized for text formatting for the Bio validation feature.
+# JavaScript is utilized for text formatting for the
+# Bio validation feature. (WYSIWYG)
 
 # A password strength “meter” is displayed when validating passwords.
 
