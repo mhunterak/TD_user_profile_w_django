@@ -25,12 +25,6 @@ class ProfileForm(forms.ModelForm):
             }
         )
     )
-    email = forms.EmailField(
-        validators=[],
-        error_messages={
-            'required': (
-                'Please verify your email address to make changes')},
-    )
     specialty = forms.CharField(
         widget=forms.TextInput(
             attrs={'placeholder': "What's your weapon of choice?"}))
@@ -43,9 +37,30 @@ class ProfileForm(forms.ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        if not email == self.instance.email:
-            raise ValidationError("please verify your email address")
+        if self.instance.email == "":
+            # if the email hasn't been set yet, pass
+            print("if the email hasn't been set yet")
+        elif not email == self.instance.email:
+            raise ValidationError("please verify your email address on file")
         return email
+
+    def __init__(self, *args, **kwargs):
+        if self.instance:
+            if self.instance.email == "":
+                print("No instance e    mail")
+                self.email = forms.EmailField(
+                    error_messages={
+                        'required': (
+                            '''Please enter a new email address''')},
+                )
+            else:
+                print("instance email: {}".format(instance.email))
+                self.email = forms.EmailField(
+                    error_messages={
+                        'required': (
+                            '''Please verify your email address to make changes''')},
+                )
+        super().__init__(*args, **kwargs)
 
     class Meta:
         model = models.Profile
