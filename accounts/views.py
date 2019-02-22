@@ -1,3 +1,8 @@
+'''
+ACCOUNT VIEWS
+
+views for auth routes, and updating account profiles
+'''
 # Native libraries
 # 3rd party imports
 from django.contrib import messages
@@ -12,20 +17,40 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 # Custom modules
 from .models import Profile
-from .forms import ProfileForm, ImageForm
+from .forms import ProfileForm, ImageForm, EmailForm
 
+
+def user_has_email(request):
+    '''This function looks to see if a user has submitted their email yet'''
+    try:
+        # if they have a profile, but their email is None or blank
+        if (
+                request.user.profile.email is None) or (
+                request.user.profile.email == ''):
+            messages.error(
+                request,
+                "Before we get do that, we need your email:")
+            return False
+    # if the user doesn't have a profile yet
+    except User.profile.RelatedObjectDoesNotExist:
+        messages.error(
+            request,
+            "To get started, we need your email:")
+        return False
+    return True
 
 # PROFILE #
 
 
 # Profile Crud - recall
+@login_required
 def profile(request, pk):
-    '''
-Shows any user's profile
-no login required
-    '''
+    '''Shows any user's profile'''
+    if not user_has_email(request):
+        # if a user hasn't sent in their email yet, they can't see profiles
+        return HttpResponseRedirect(reverse('accounts:provide_email'))
+    # a profile is recalled by the connected user's username
     user = get_object_or_404(User, username=pk)
-    Profile.create_or_recall(user)
     return render(
         request,
         'accounts/profile.html',
@@ -33,12 +58,12 @@ no login required
     )
 
 
-# Bio
+@login_required
 def bio(request, pk):
-    '''
-Shows any user's profile
-no login required
-    '''
+    '''Shows any user's profile'''
+    if not user_has_email(request):
+        # if a user hasn't sent in their email yet, they can't see profiles
+        return HttpResponseRedirect(reverse('accounts:provide_email'))
     user = get_object_or_404(User, username=pk)
     return render(
         request,
@@ -46,21 +71,38 @@ no login required
         {'profile': user.profile}
     )
 
+# Profile - add your email first
+@login_required
+def provide_email(request):
+    '''After registering, a user must first provide their email.'''
+    form = EmailForm()
+    if request.method == 'POST':
+        form = EmailForm(
+            data=request.POST)
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.account = request.user
+            profile.save()
+            print('Profile Saved')
+            messages.success(request, 'profile updated!')
+            return HttpResponseRedirect(
+                reverse('accounts:edit_profile'))
+    return render(
+        request,
+        'accounts/default_w_form.html',
+        {'form': form}
+    )
+
+
 # Profile - create/update
 @login_required
 def edit_profile(request):
-    '''
-Edits a user's own profile
-login required
-    '''
-    try:
-        profile = Profile.objects.get(account=request.user)
-    except (Profile.DoesNotExist, UnboundLocalError):
-        profile = None
+    '''Edits a user's own profile'''
+    if not user_has_email(request):
+        return HttpResponseRedirect(reverse('accounts:provide_email'))
+    profile = request.user.profile
     if request.method == 'POST':
-        form = ProfileForm(
-            data=request.POST,
-            instance=profile)
+        form = ProfileForm(instance=profile, data=request.POST)
         if form.is_valid():
             profile = form.save(commit=False)
             profile.account = request.user
@@ -69,13 +111,13 @@ login required
             messages.success(request, 'profile updated!')
             return HttpResponseRedirect(
                 reverse('accounts:profile', kwargs={
-                    'pk': request.user.username,
-                })
-            )
+                    'pk': request.user.username, }))
     try:
         data = profile.__dict__
     except AttributeError:
         data = {}
+    # We're asking a user to verify their email when they edit their profile
+    # best not to give them the answer!
     data['email'] = ''
     form = ProfileForm(instance=profile, data=data)
     return render(
@@ -87,9 +129,9 @@ login required
 
 @login_required
 def avatar_upload(request):
-    '''
-Adds the ability to upload and save a user’s avatar image
-    '''
+    '''Adds the ability to upload and save a user’s avatar image'''
+    if not user_has_email(request):
+        return HttpResponseRedirect(reverse('accounts:provide_email'))
     form = ImageForm()
     if request.method == 'POST':
         form = ImageForm(request.POST, request.FILES)
@@ -100,45 +142,38 @@ Adds the ability to upload and save a user’s avatar image
         messages.success(request, 'Avatar Updated')
     return render(request, 'accounts/update_avatar.html', {
         'H1': 'Update Avatar',
-        'form': form,
-    }
-    )
+        'form': form, })
 
 
 # AUTH ROUTES #
 
 
 def sign_up(request):
-    '''
-Creates a new user account, and get sign in to the new account
-    '''
+    '''Creates a new user account, and sign in to the new account'''
     form = UserCreationForm()
     if request.method == 'POST':
         form = UserCreationForm(data=request.POST)
         if form.is_valid():
+            # user =
             form.save()
+            # the user account (not the profile) has been created
             user = authenticate(
                 username=form.cleaned_data['username'],
-                password=form.cleaned_data['password1']
-            )
-            # TODO: create user profile here, and then save email?
+                password=form.cleaned_data['password1'])
             login(request, user)
             messages.success(
                 request,
-                "You're now a user! You've been signed in, too."
-            )
+                "You're now a user! You've been signed in, too.")
             messages.success(
                 request,
-                "Why not get started by editing your profile?"
-            )
-            return HttpResponseRedirect(reverse('accounts:edit_profile'))
+                "Why not get started by providing your email?")
+            # redirect to the email page. This could also be a modal?
+            return HttpResponseRedirect(reverse('accounts:provide_email'))
     return render(request, 'accounts/sign_up.html', {'form': form})
 
 
 def sign_in(request):
-    '''
-Signs in a user with an authenticated password
-    '''
+    '''Signs in a user with an authenticated password'''
     form = AuthenticationForm()
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
@@ -148,38 +183,29 @@ Signs in a user with an authenticated password
                 if user.is_active:
                     login(request, user)
                     return HttpResponseRedirect(
-                        reverse(
-                            'accounts:profile',
-                            kwargs={'pk': user.username}
-                        )
-                    )
+                        reverse('accounts:profile',
+                                kwargs={'pk': user.username}))
                 else:
                     messages.error(
                         request,
-                        "That user account has been disabled."
-                    )
+                        "That user account has been disabled.")
             else:
                 messages.error(
                     request,
-                    "Username or password is incorrect."
-                )
+                    "Username or password is incorrect.")
     return render(request, 'accounts/sign_in.html', {'form': form})
 
 
 @login_required
 def sign_out(request):
-    '''
-Signs out a user
-    '''
+    '''Signs out a user'''
     logout(request)
     messages.success(request, "You've been signed out. Come back soon!")
     return HttpResponseRedirect(reverse('home'))
 
 
 def change_password(request):
-    '''
-this route allows a user to reset their password
-    '''
+    '''This route allows a user to reset their password'''
     form = PasswordChangeForm(request.user)
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)

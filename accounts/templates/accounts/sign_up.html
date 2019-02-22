@@ -1,13 +1,23 @@
 {% extends "layout.html" %}
+{% load static from staticfiles %}
 
 {% block title %}Sign Up | {{ super }}{% endblock %}
 
 {% block body %}
+
+{# thanks to zxcvbn for the awesome password strength meter #}
+
+
 <p>
-    <form method="POST" action="{% url 'accounts:sign_up' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" class="button-primary" value="Sign Up">
-    </form>
+  <form method="POST" action="{% url 'accounts:sign_up' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <meter class='grid-15' max="4" id="password-strength-meter"></meter>
+    <p id="password-strength-text"></p>
+    <input type="submit" class="button-primary" value="Sign Up">
+  </form>
 </p>
+
+<script type="text/javascript" src="{% static 'js/pwMeter.js' %}"></script>
+
 {% endblock %}

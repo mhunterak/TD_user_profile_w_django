@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 {% block body %}
-<div class="grid-75">
+<div class="grid-75 centered">
     <h1>Edit Profile -
         <a href="{% url 'accounts:profile' pk=user.username %}">
             {{ user.username }}
@@ -11,7 +11,7 @@
         <img src="{{ settings.MEDIA_ROOT }}{{ user.profile.avatar.url }}">
     </div>
     {% endif %}
-    <div class="grid-75">
+    <div class="grid-75 centered">
         <form action="" method="POST">
             {% csrf_token %}
             {{ form }}

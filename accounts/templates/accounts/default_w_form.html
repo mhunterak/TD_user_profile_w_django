@@ -1,11 +1,25 @@
 {% extends 'layout.html' %}
+{% load static from staticfiles %}
+
 {% block body %}
-<div class="grid-75">
+{# thanks to zxcvbn for the awesome password strength meter #}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.2.0/zxcvbn.js"></script>
+
+<div class="grid-75 centered">
     <h1>{{ H1 }}</h1>
     <form action="" method="POST">
         {% csrf_token %}
         {{ form }}
+
+        {% if H1 == "Change Password" %}
+        <meter class='grid-15' max="4" id="password-strength-meter"></meter>
+        <p id="password-strength-text"></p>
+        <input type="submit" class="button-primary" value="Sign Up">
+        {% endif %}
+        
         <input type="submit" value="Update">
     </form>
 </div>
+
+<script type="text/javascript" src="{% static 'js/pwMeter.js' %}"></script>
 {% endblock %}

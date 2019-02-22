@@ -4,7 +4,7 @@ from django.db import models
 
 class Profile(models.Model):
     '''
-This is the model for a User's profile
+This is the model for a User's Profile
 
 USAGE:
 
@@ -31,37 +31,28 @@ to recall the image in a template, use:
 {{ settings.MEDIA_ROOT }}{{ user.profile.avatar.url }}
     '''
     # First Name
-    first_name = models.CharField(max_length=60)
+    first_name = models.CharField(max_length=60, null=True)
     # Last Name
-    last_name = models.CharField(max_length=60)
+    last_name = models.CharField(max_length=60, null=True)
     # Email
     email = models.CharField(max_length=256)
     # Date of Birth
     dob = models.DateField(null=True)
     # Bio
-    bio = models.TextField(default="Enter your Bio here!")
-
+    bio = models.TextField(null=True)
+    # EXTRA CREDIT
     # Specialty (ex. python, javascript)
-    specialty = models.CharField(default="", max_length=32)
+    specialty = models.CharField(default="", max_length=32, null=True)
     # github id (will be used to automatically generate links)
-    github = models.CharField(default="", max_length=39)
+    github = models.CharField(default="", max_length=39, null=True)
     # linkedin id (will be used to automatically generate links)
     # no ' ', '-', or special chars
-    linkedin = models.CharField(default="", max_length=100)
-
-    def create_or_recall(user):
-        '''
-this method returns an existing profile, or creates and returns new profile
-        '''
-        try:
-            profile = Profile.objects.get(account=user)
-        except Profile.DoesNotExist:
-            profile = Profile(account=user).save()
-        return profile
+    linkedin = models.CharField(default="", max_length=100, null=True)
 
     def __iter__(self):
         '''
-This handy function is called when you use:
+This handy function returns the instance attributes when called as an iterator
+ie:
 
 for key, value in profile:
     print("{}: {},".format(key, value))

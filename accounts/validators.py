@@ -45,6 +45,7 @@ class NameNotInPassword(object):
         if user.username in password:
             flag += 1
             print('username in password flag')
+            print('{} in {}'.format(user.username, password))
         try:
             profile = Profile.objects.get(user)
             if profile.first_name != "":

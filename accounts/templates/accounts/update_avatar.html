@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 {% block body %}
-    <div class="grid-75">
+    <div class="grid-75 centered">
         <h1>{{ H1 }}</h1>
         {% if user.profile.avatar %}
         <img src="{{ settings.MEDIA_ROOT }}{{ user.profile.avatar.url }}">
