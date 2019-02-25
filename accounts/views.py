@@ -6,7 +6,6 @@ views for auth routes, and updating account profiles
 # Native libraries
 import os
 # 3rd party imports
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import (
     authenticate, login, logout, update_session_auth_hash)
@@ -18,7 +17,7 @@ from django.urls import reverse
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from PIL import Image, ExifTags
+from PIL import Image
 # Custom modules
 from .models import Profile
 from .forms import ProfileForm, ImageForm, EmailForm
@@ -114,16 +113,11 @@ def edit_profile(request):
             print('Profile Saved')
             messages.success(request, 'profile updated!')
             return HttpResponseRedirect(
-                reverse('accounts:profile', kwargs={
-                    'pk': request.user.username, }))
-    try:
-        data = profile.__dict__
-    except AttributeError:
-        data = {}
-    # We're asking a user to verify their email when they edit their profile
-    # best not to give them the answer!
-    data['email'] = ''
-    form = ProfileForm(instance=profile, data=data)
+                reverse(
+                    'accounts:profile',
+                    kwargs={
+                        'pk': request.user.username, }))
+    form = ProfileForm(instance=profile)
     return render(
         request,
         'accounts/edit_profile.html',
@@ -146,7 +140,8 @@ def avatar_upload(request):
             profile = Profile.objects.get(pk=request.user)
             profile.avatar = request.FILES['avatar']
             profile.save()
-        messages.success(request, 'Avatar Uploaded')
+            messages.success(request, 'Avatar Uploaded')
+            return HttpResponseRedirect(reverse('accounts:avatar_upload'))
     return render(request, 'accounts/update_avatar.html', {
         'H1': 'Update Avatar',
         'form': form, })
@@ -160,9 +155,11 @@ def avatar_manipulate(request, pk):
         # these are acceptable parameters, anything else gets rejected.
         raise ValueError("I'm afraid I can't let you do that, Dave.")
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    # get the file path for the current user's profile
     filepath = BASE_DIR + request.user.profile.avatar.url
-    print(filepath)
+    # open the image in PIL
     image = Image.open(filepath)
+    # perform the image manipulation
     if pk == "left":
         image = image.rotate(90, expand=True)
     if pk == "right":
@@ -171,9 +168,18 @@ def avatar_manipulate(request, pk):
         image = image.transpose(Image.FLIP_TOP_BOTTOM)
     if pk == "horz":
         image = image.transpose(Image.FLIP_LEFT_RIGHT)
+    # save the image back to the same filepath
     image.save(filepath)
     image.close()
     return HttpResponseRedirect(reverse('accounts:avatar_upload'))
+
+
+"""
+@login_required
+def avatar_crop(request):
+    '''This function handles adding in a crop feature for the avatar'''
+    return render(request, 'accounts/crop_avatar.html')
+"""
 
 
 # AUTH ROUTES #
@@ -240,6 +246,7 @@ def change_password(request):
     form = PasswordChangeForm(request.user)
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
+        # if the user provided the corrent current password
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)

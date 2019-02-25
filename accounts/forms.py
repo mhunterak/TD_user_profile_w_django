@@ -30,9 +30,8 @@ class ProfileForm(forms.ModelForm):
         widget=forms.TextInput(attrs={
             'class': 'datepicker'
         }))
-    email = forms.EmailField(
-        error_messages={
-            'required': 'Please verify your email to make changes'})
+    email = forms.EmailField()
+    confirm_email = forms.EmailField()
     specialty = forms.CharField(
         widget=forms.TextInput(
             attrs={'placeholder': "What's your weapon of choice?"}))
@@ -48,14 +47,16 @@ class ProfileForm(forms.ModelForm):
         email when editing their profile.
         '''
         email = self.cleaned_data['email']
-        if not email.lower() == self.instance.email.lower():
-            raise ValidationError("please verify your email address on file")
+        email2 = (self.data['confirm_email'])
+        if not email.lower() == email2.lower():
+            raise ValidationError("emails do not match")
         return email
 
     class Meta:
         model = models.Profile
         fields = [
             'email',
+            'confirm_email',
             'first_name',
             'last_name',
             'dob',

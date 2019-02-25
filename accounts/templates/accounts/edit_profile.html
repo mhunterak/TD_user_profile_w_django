@@ -1,9 +1,6 @@
 {% extends 'layout.html' %}
 
-{% load wysiwyg %}
-
 {% block head %}
-{% wysiwyg_setup %}
 {% endblock %}
 
 {% block body %}
@@ -25,5 +22,4 @@
             <input type="submit" value="Update">
         </form>
     </div>
-    {% wysiwyg_editor "id_bio" %}
 {% endblock %}

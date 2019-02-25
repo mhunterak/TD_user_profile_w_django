@@ -6,15 +6,13 @@
             <h1>{{ H1 }}</h1>
             {% if user.profile.avatar %}
             <img src="{{ settings.MEDIA_ROOT }}{{ user.profile.avatar.url }}">
-            {% endif %}
         </div>
         <div class="grid-100 centered">
             <a href="{% url 'accounts:avatar_manipulate' pk="left" %}">Rotate Left</a>
             <a href="{% url 'accounts:avatar_manipulate' pk="horz" %}">Flip Horizontal</a>
-            <a href="#">Crop</a>
             <a href="{% url 'accounts:avatar_manipulate' pk="vert" %}">Flip Vertical</a>
             <a href="{% url 'accounts:avatar_manipulate' pk="right" %}">Rotate Right</a>
-
+            {% endif %}
         </div>
         <div class="grid-100 centered">
             <form action="" method="POST" enctype="multipart/form-data">
