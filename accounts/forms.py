@@ -1,6 +1,5 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from django.contrib.auth.models import User
 
 from . import models
 
@@ -12,6 +11,15 @@ class ImageForm(forms.ModelForm):
         fields = ['avatar']
 
 
+class EmailForm(forms.ModelForm):
+    '''This form is for adding the email field to the profile separately.'''
+    email = forms.EmailField()
+
+    class Meta:
+        model = models.Profile
+        fields = ['email', ]
+
+
 class ProfileForm(forms.ModelForm):
     '''This form is the main form for editing a user's profile'''
     bio = forms.CharField(
@@ -19,18 +27,11 @@ class ProfileForm(forms.ModelForm):
         widget=forms.Textarea(
             attrs={'placeholder': "Tell your story"}))
     dob = forms.DateField(
-        widget=forms.DateInput(
-            attrs={
-                'placeholder': "use format MM/DD/YYYY",
-            }
-        )
-    )
-    email = forms.EmailField(
-        validators=[],
-        error_messages={
-            'required': (
-                'Please verify your email address to make changes')},
-    )
+        widget=forms.TextInput(attrs={
+            'class': 'datepicker'
+        }))
+    email = forms.EmailField()
+    confirm_email = forms.EmailField()
     specialty = forms.CharField(
         widget=forms.TextInput(
             attrs={'placeholder': "What's your weapon of choice?"}))
@@ -42,15 +43,20 @@ class ProfileForm(forms.ModelForm):
             attrs={'placeholder': "Enter linkedin.com/in/[THIS_PART]"}))
 
     def clean_email(self):
+        '''This is the method for validating that the user submitted their
+        email when editing their profile.
+        '''
         email = self.cleaned_data['email']
-        if not email == self.instance.email:
-            raise ValidationError("please verify your email address")
+        email2 = (self.data['confirm_email'])
+        if not email.lower() == email2.lower():
+            raise ValidationError("emails do not match")
         return email
 
     class Meta:
         model = models.Profile
         fields = [
             'email',
+            'confirm_email',
             'first_name',
             'last_name',
             'dob',
@@ -59,3 +65,4 @@ class ProfileForm(forms.ModelForm):
             'linkedin',
             'bio',
         ]
+        widgets = {'dob': forms.DateInput(attrs={'class': 'datepicker'}), }

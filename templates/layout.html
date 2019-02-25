@@ -1,12 +1,13 @@
 {% load static from staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
 
+<head>
     <!-- Basic Page Needs
     –––––––––––––––––––––––––––––––––––––––––––––––––– -->
     <meta charset="utf-8">
     <title>{% block title %}Circle{% endblock %}</title>
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
 
     <!-- Mobile Specific Metas
     –––––––––––––––––––––––––––––––––––––––––––––––––– -->
@@ -14,10 +15,8 @@
 
     <!-- FONTS
     –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-    <link href='https://fonts.googleapis.com/css?family=Work+Sans:400,500'
-          rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Cousine'
-          rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?`mily=Work+Sans:400,500' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Cousine' rel='stylesheet' type='text/css'>
 
     <!-- CSS
     –––––––––––––––––––––––––––––––––––––––––––––––––– -->
@@ -26,85 +25,75 @@
 
     <!-- JS
     –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-    <script type="text/javascript"
-            src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
-    <script type="text/javascript"
-            src="{% static "js/autogrow.js" %}"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+    <script type="text/javascript" src="{% static "js/autogrow.js" %}"></script>
     <script type="text/javascript" src="{% static "js/global.js" %}"></script>
-
-
+    <!-- for the password strength meter  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.2.0/zxcvbn.js"></script>
+    {% block head %}
+    {% endblock %}
 </head>
+
 <body>
-<header class="circle--header">
-    <div class="bounds">
-        <div class="circle--fluid">
-            <div class="circle--fluid--cell">
-                <h1 class="hide-text circle--logo"><a class="logo"
-                                                      href="{% url 'home' %}">Circle</a>
-                </h1>
-            </div>
-            <div class="circle--fluid--cell circle--fluid--primary">
-                <nav>
-                    <ul class="circle--inline">
-                        <li><a href="/">Circle</a></li>
-                    </ul>
-                </nav>
-            </div>
-            <div class="circle--fluid--cell circle--fluid--secondary">
-                <nav>
-                    <ul class="circle--inline">
-                        {% if not user.is_authenticated %}
+    <header class="circle--header">
+        <div class="bounds">
+            <div class="circle--fluid">
+                <div class="circle--fluid--cell">
+                    <h1 class="hide-text circle--logo"><a class="logo" href="{% url 'home' %}">Circle</a>
+                    </h1>
+                </div>
+                <div class="circle--fluid--cell circle--fluid--primary">
+                    <nav>
+                        <ul class="circle--inline">
+                            <li><a href="/">Circle</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="circle--fluid--cell circle--fluid--secondary">
+                    <nav>
+                        <ul class="circle--inline">
+                            {% if not user.is_authenticated %}
                             <li><a href="{% url 'accounts:sign_up' %}">Sign Up</a></li>
-                            <li><a href="{% url 'accounts:sign_in' %}">Sign
-                                In</a></li>
-                        {% else %}
-                            <!-- view profile link here? -->
-                            <!-- edit profile link here? -->
+                            <li><a href="{% url 'accounts:sign_in' %}">Sign In</a></li>
+                            {% else %}
+                            <li><a href="{% url 'accounts:profile' pk=user.username %}">My Profile</a></li>
+                            <li><a href="{% url 'accounts:edit_profile' %}">Edit Profile</a></li>
+                            <li><a href="{% url 'accounts:avatar_upload'%}">Change Avatar</a></li>
+                            <li><a href="{% url 'accounts:change_password'%}">Change Password</a></li>
                             <li><a href="{% url 'accounts:sign_out' %}">Sign Out</a></li>
-                        {% endif %}
-                    </ul>
-                </nav>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
-    </div>
-</header>
+    </header>
 
-<div class="bounds circle--page">
-    {% if messages %}
+    <div class="bounds circle--page">
+        {% if messages %}
         <ul class="messages centered grid-50">
             {% for message in messages %}
-                <li{% if message.tags %}
-                    class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
+            <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                {% endfor %}
         </ul>
-    {% endif %}
-    <div class="grid-25">
-    {% if user.is_authenticated %}
-    <ul>
-        <li>
-            <a href="{% url 'accounts:profile' pk=user.username %}">
-                My Profile
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'accounts:edit_profile' %}">
-                Edit Profile
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'accounts:avatar_upload'%}">
-                Upload Avatar
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'accounts:change_password'%}">
-                Change Password
-            </a>
-        </li>
-    </ul>
-    {% endif %}
-    </div>    
-    {% block body %}{% endblock %}
-</div>
+        {% endif %}
+        {% block body %}{% endblock %}
+    </div>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+        integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous">
+        </script>
+    <script>
+        $(function () {
+            $(".datepicker").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "1900:2012",
+                // You can put more options here.
+
+            });
+        });
+    </script>
+
 </body>
+
 </html>

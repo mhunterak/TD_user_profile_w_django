@@ -1,8 +1,8 @@
 import re
 
+from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
-from django.contrib.auth.hashers import check_password
 
 from .models import Profile
 
@@ -36,24 +36,38 @@ class ContainsUpperLowerNumberSpecial(object):
         )
 
 
+NameInPWerr = "Your Password cannot contain user name or parts of full name."
+
+
 class NameNotInPassword(object):
     def validate(self, password, user=None):
         flag = 0
         if user.username in password:
             flag += 1
-        profile = Profile.create_or_recall(user)
-        if profile.first_name != "":
-            if re.match(profile.first_name, password):
-                flag += 1
-        if profile.last_name != "":
-            if re.match(profile.last_name, password):
-                flag += 1
+            print('username in password flag')
+            print('{} in {}'.format(user.username, password))
+        try:
+            profile = Profile.objects.get(user)
+            if profile.first_name != "":
+                if re.match(profile.first_name, password):
+                    print('firstname in password flag')
+                    flag += 1
+            if profile.last_name != "":
+                if re.match(profile.last_name, password):
+                    print('lastname in password flag')
+                    flag += 1
+        except (TypeError, Profile.DoesNotExist):
+            '''
+            If they don't have a profile yet, I think it's okay to skip
+            this password validation test.
+            '''
+            pass
         if flag > 0:
             print("{} flags".format(flag))
             raise ValidationError(
-                _("Your Password cannot contain user name or parts of the full name."),
+                _(NameInPWerr),
                 code='contains_name',
             )
 
     def get_help_text(self):
-        return _("Your Password cannot contain user name or parts of the full name.")
+        return _(NameInPWerr)

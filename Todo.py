@@ -58,3 +58,22 @@ MASTER TODO LIST for User Profile project
 
 # Use CSS to style headings, font, and form.
 # Make sure your coding style complies with PEP 8
+
+
+# EXTRA CREDIT
+# Add additional form fields to build a more complex form
+#   with additional options, such as city/state/country of residence,
+#   favorite animal or hobby
+# JavaScript is utilized for a date dropdown
+# for the Date of Birth validation feature.
+# JavaScript is utilized for text formatting for the
+# Bio validation feature. (WYSIWYG)
+
+# A password strength “meter” is displayed when validating passwords.
+
+# FINAL TODO: Add an online image editor to the avatar.
+# Include the basic functionality:
+#   rotate,
+#   crop and
+#   flip.
+# PNG mockup supplied.

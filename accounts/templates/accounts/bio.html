@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% load app_filters %}
 {% block body %}
-<div class="grid-75">
+<div class="grid-75 centered">
     <div class="grid-65">
         <p>
             <h1>
@@ -9,7 +9,7 @@
                 {{ profile.last_name }}
             </h1>
             <p>
-                {{ profile.bio }}
+                {{ profile.bio | escape }}
                 <br />
                 <a href="{% url 'accounts:profile' pk=profile.account.username %}">
                     [ Profile ]
