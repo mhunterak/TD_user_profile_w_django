@@ -1,4 +1,4 @@
-# User Profile with Django
+# User Profile with Django / Social Team Builder
 
 Steps to get the project running.
 
