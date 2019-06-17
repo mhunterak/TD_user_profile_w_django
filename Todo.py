@@ -1,6 +1,41 @@
-'''
+"""
+MASTER TODO LIST for socail team builder project
+"""
+# As a user of the site, I should be able to sign up for an account.
+# As a user of the site, I should be able to log into my account.
+# As a user of the site, I should be able to edit my profile.
+# As a user of the site, I should be able to upload an avatar image for my profile.
+# As a user of the site, I should be able to pick my skills for my profile.
+# As a user of the site, I should be able to create a project that I need help on.
+# As a user of the site, I should be able to specify the positions my project needs help in with a name, a description, and related skill.
+# As a user of the site, I should be able to see all of the applicants for my project's positions.
+# As a user of the site, I should be able to approve an applicant for a position in my project.
+# As a user of the site, I should be able to reject an applicant for a position in my project.
+# As a user of the site, I should get a notification if I've been rejected or approved for a position.
+# As a user of the site, I should be able to search for projects based on words in their titles or descriptions.
+# As a user of the site, I should be able to filter projects by the positions they need filled.
+# As a user of the site, I should be able to apply for a position in a project.
+# As a user of the site, I should be able to log out.
+
+# Extra Credit:
+
+# TODO As a user of the site, I should get an email verification after sign up.
+# As a user of the site, a position should be marked as filled once I accept someone for it.
+# As a user of the site, I should filled positions should be hidden or marked as filled so I don't apply for them.
+# As a user of the site, I should be able to use Markdown in the "about me" part of my profile.
+# As a user of the site, I should be able to list any skill on my profile, not just pre-selected ones.
+#  As a user of the site, my profile should list projects I've been involved with.
+# TODO As a user of the site, I should be able to use Markdown in my project description.
+# TODO As a user of the site, I should be able to use Markdown in the position descriptions.
+# TODO As a user of the site, I should be able to provide a listed length of involvement for a position (e.g. Designer: 10 hours/week).
+# TODO As a user of the site, I should be able to filter applicants by their status (approved, denied, undecided).
+# As a user of the site, I should be able to approve or deny applicants directly from the list of applicants.
+# TODO As a user of the site, I should be given a list of projects that need my skill set.
+
+
+"""
 MASTER TODO LIST for User Profile project
-'''
+"""
 
 # Create a Django model for the user profile.
 # Add routes to display a profile,

@@ -1,0 +1,122 @@
+{% extends 'layout.html' %}
+{% load app_filters %}
+{% block body %}
+
+  <div class="circle--actions--bar">
+    <nav class="bounds">
+      <ul class="circle--pill--list">
+        <li><a class="selected" href="applications.html">Applications</a></li>
+        <li><a href="profile.html">Profile</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="bounds circle--page">
+    <div class="circle--page--header grid-100">
+      <h2>Applications</h2>
+    </div>
+
+    <div class="grid-25">
+      <div class="circle--filter circle--secondary--module">
+        <h4>Status</h4>
+        <ul class="circle--filter--list">
+          <li><a class="selected">All Applications</a></li>
+          <li><a>New Applications</a></li>
+          <li><a>Accepted</a></li>
+          <li><a>Rejected</a></li>
+        </ul>
+      </div>
+
+      <div class="circle--filter circle--secondary--module">
+        <h4>My Projects</h4>
+        <ul class="circle--filter--list">
+          <li><a class="selected">All Projects</a></li>
+          <li><a>Currency Calculator</a></li>
+          <li><a>Twitter Client</a></li>
+        </ul>
+      </div>
+
+      <div class="circle--filter circle--secondary--module">
+        <h4>Project Needs</h4>
+        <ul class="circle--filter--list">
+          <li><a class="selected">All Needs</a></li>
+          <li><a>Android Developer</a></li>
+          <li><a>Designer</a></li>
+          <li><a>Java Developer</a></li>
+          <li><a>PHP Developer</a></li>
+          <li><a>Python Developer</a></li>
+          <li><a>Rails Developer</a></li>
+          <li><a>WordPress Developer</a></li>
+          <li><a>iOS Developer</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="grid-70 grid-push-5">
+      <table class="u-full-width circle--table">
+        <thead>
+          <tr>
+            <th>Applicant</th>
+            <th class="circle--cell--right">Applicant Position</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for position in project.positions.all %}
+          {% for applicant in position.applicants.all %}
+          {% if applicant == position.incumbent %}
+            {% else %}
+            <tr class="clickable-row" data-href="profile.html">
+              <td>
+                <h3>{{ applicant.account.username }}</h3>
+              </td>
+              <td class="circle--cell--right">
+                <span class="secondary-label">{{ position.title }}</span>
+                <p>on {{ project.title }}</p>
+              </td>
+              <td>
+                <a href="{% url 'teams:approve_for_position' pk=position.pk applicant_pk=applicant.pk %}">
+                  <button>
+                    Select
+                  </button>
+                </a>
+                <a href="{% url 'teams:reject_for_position' pk=position.pk applicant_pk=applicant.pk %}">
+                  <button class="reject">
+                    Reject
+                  </button>
+                </a>
+              </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+            {% for position in project.positions.all %}
+            {% for applicant in position.rejects.all %}
+            <tr class="clickable-row" data-href="profile.html">
+              <td>
+                <h3>REJECTED - {{ applicant.account.username }}</h3>
+              </td>
+              <td class="circle--cell--right">
+                <span class="secondary-label">{{ position.title }}</span>
+                <p>on {{ project.title }}</p>
+              </td>
+              <td>
+                <a href="{% url 'teams:approve_for_position' pk=position.pk applicant_pk=applicant.pk %}">
+                  <button>
+                    Select
+                  </button>
+                </a>
+                <a href="{% url 'teams:reject_for_position' pk=position.pk applicant_pk=applicant.pk %}">
+                  <button class="reject">
+                    Reject
+                  </button>
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        {% endfor %}
+        </tbody>
+      </table>
+
+    </div>
+{% endblock %}

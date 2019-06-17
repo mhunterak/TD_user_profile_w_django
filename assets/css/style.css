@@ -1,6 +1,7 @@
 /*
 Custom styles for User Profile
 */
+
 .center {
 	margin: auto;
 	text-align: center;
@@ -19,4 +20,34 @@ Custom styles for User Profile
 	border: 1px solid black;
 	box-shadow: 1em black;
 	padding: 0.5em;
+}
+
+#profile {
+	display: none;
+	z-index: 1;
+	margin: 5em;
+}
+
+#profileTrigger {
+	color: white;
+	margin: 5em;
+}
+
+#profileTrigger:hover>#profile {
+	display: block;
+}
+
+#projects {
+	display: none;
+	z-index: 1;
+	margin: 5em;
+}
+
+#projectsTrigger {
+	color: white;
+	flex-direction: column;
+}
+
+#projectsTrigger:hover>#projects {
+	display: block;
 }

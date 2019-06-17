@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+<body>
+    <table>
+        {% for notification in notifications %}
+        <tr>
+            <td>
+                {{ notification.timestamp }} - {{ notification.description }}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+{% endblock %}

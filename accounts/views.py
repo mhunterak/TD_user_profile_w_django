@@ -254,3 +254,14 @@ def change_password(request):
     return render(request, 'accounts/default_w_form.html', {
         'H1': 'Change Password',
         'form': form})
+
+@login_required
+def notifications(request):
+    notifications = request.user.profile.get_notifications()
+    return render(
+        request,
+        'accounts/notifications.html',
+        {'notifications':notifications,
+        }
+    )
+

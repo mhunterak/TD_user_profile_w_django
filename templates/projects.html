@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+{% block body %}
+    <div class="grid-75 centered">
+        <h1> {{ H1 }} </h1>
+        <hr>
+        {% for project in projects %}
+        <h2>
+            <a href="{% url 'teams:project' pk=project.id %}">
+                {{ project.title }}
+            </a>
+        </h2>
+        <h5>
+            {{ project.description }}
+        </h5>
+        <hr>
+        {% endfor %}
+    </div>
+{% endblock %}

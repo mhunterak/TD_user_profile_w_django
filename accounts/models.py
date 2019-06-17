@@ -1,35 +1,22 @@
+from django.utils import timezone as tz
 from django.conf import settings
 from django.db import models
 
 
 class Profile(models.Model):
-    '''
-This is the model for a User's Profile
 
-USAGE:
+    """
+    Model for a User Profile
 
-profile = Profile.objects.get(account=user)
-{{ profile.bio }}
---or--
-# Use the logged in user from the request (like flask's current_user)
-request.user.profile
 
 rather than extend a user model, this is simply an extended class connected to
 a user with a foreign key
-    '''
+    """
+
     account = models.OneToOneField(
-        # primary key for this model
-        # is a foreign key connected to the default user model
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        primary_key=True,
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True
     )
-    # Avatar
     avatar = models.ImageField()
-    '''
-to recall the image in a template, use:
-{{ settings.MEDIA_ROOT }}{{ user.profile.avatar.url }}
-    '''
     # First Name
     first_name = models.CharField(max_length=60, null=True)
     # Last Name
@@ -43,24 +30,35 @@ to recall the image in a template, use:
     # EXTRA CREDIT
     # Specialty (ex. python, javascript)
     specialty = models.CharField(default="", max_length=32, null=True)
-    # github id (will be used to automatically generate links)
+    # github id - generates links automatically
     github = models.CharField(default="", max_length=39, null=True)
-    # linkedin id (will be used to automatically generate links)
-    # no ' ', '-', or special chars
+    # linkedin id - generates links automatically
     linkedin = models.CharField(default="", max_length=100, null=True)
 
+    def add_notification(self, description):
+        Notification.objects.create(profile=self, description=description)
+
+    def get_notifications(self):
+        return Notification.objects.all().filter(profile=self)
+
     def __iter__(self):
-        '''
+        """
 This handy function returns the instance attributes when called as an iterator
 ie:
 
 for key, value in profile:
     print("{}: {},".format(key, value))
-        '''
+        """
         for i, field_name in enumerate(self._meta.get_fields()):
             if i < 2:
                 # skip the account and avatar attributes
                 pass
             else:
-                value = getattr(self, str(field_name).split('.')[2])
-                yield (str(field_name).split('.')[2], value)
+                value = getattr(self, str(field_name).split(".")[2])
+                yield (str(field_name).split(".")[2], value)
+
+
+class Notification(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    description = models.CharField(max_length=256)
+    timestamp = models.DateTimeField(default=tz.now)
