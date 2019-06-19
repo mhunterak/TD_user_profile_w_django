@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
@@ -19,7 +20,7 @@ def add_skill(request):
         form = SkillForm(data=request.POST)
         if form.is_valid():
             skill = form.save()
-            skill.account.set([request.user.profile])
+            skill.account.add([request.user.profile])
             print("skill {} saved".format(skill.title))
             messages.success(request, "skill added to your Profile!")
             return HttpResponseRedirect(
@@ -39,7 +40,7 @@ def add_skill_position(request, pk):
         if form.is_valid():
             position = Position.objects.get(pk=pk)
             skill = form.save()
-            skill.project.set([position])
+            skill.project.add([position])
             print("skill {} saved".format(skill.title))
             messages.success(request, "skill saved!")
             return HttpResponseRedirect(
@@ -152,11 +153,19 @@ def project_search(request):
     form = SearchForm()
     if request.method == "POST":
         form = SearchForm(request.POST)
-        projects = Project.objects.all().filter(
-            title__icontains=form.data['search']
+        query = Q(title__icontains=form.data["search"])
+        query.add(Q(description__icontains=form.data["search"]), Q.OR)
+        projects = Project.objects.all().filter(query)
+
+        return render(
+            request,
+            "search.html",
+            {"form": form, "projects": projects, "query": form.data["search"]},
         )
-        return render(request, "search.html", {'form': form, "projects": projects, 'query': form.data['search'],})
-    return render(request, "search.html", {'form': form})
+    projects = Project.objects.all()
+    return render(
+        request, "search.html", {"form": form, "H1": "Projects", "projects": projects}
+    )
 
 
 @login_required
@@ -164,8 +173,18 @@ def position_search(request):
     form = SearchForm()
     if request.method == "POST":
         form = SearchForm(request.POST)
-        positions = Position.objects.all().filter(
-            title__icontains=form.data['search']
+        query = Q(title__icontains=form.data["search"])
+        query.add(Q(description__icontains=form.data["search"]), Q.OR)
+        positions = Position.objects.all().filter(query)
+
+        return render(
+            request,
+            "search.html",
+            {"form": form, "positions": positions, "query": form.data["search"]},
         )
-        return render(request, "search.html", {'form': form, "positions": positions, 'query': form.data['search'],})
-    return render(request, "search.html", {'form': form})
+    positions = Position.objects.all()
+    return render(
+        request,
+        "search.html",
+        {"form": form, "H1": "Positions", "positions": positions},
+    )

@@ -48,12 +48,12 @@ class Position(models.Model):
     rejects = models.ManyToManyField(Profile, related_name="rejects")
 
     def apply_for_position(self, profile):
-        self.applicants.set([profile])
+        self.applicants.add(profile)
 
     # TODO As a user of the site, I should be able to approve an applicant for a position in my project.
     def approve_for_position(self, profile):
         self.incumbent = profile
-        self.applicants.set([profile])
+        self.applicants.add([profile])
         self.rejects.remove(profile)
         # TODO As a user of the site, I should get a notification if I've been rejected or approved for a position.
         profile.add_notification("You've been approved for a position!")
@@ -62,7 +62,7 @@ class Position(models.Model):
     # TODO As a user of the site, I should be able to reject an applicant for a position in my project.
     def reject_for_position(self, profile):
         self.applicants.remove(profile)
-        self.rejects.set([profile])
+        self.rejects.add([profile])
         # TODO As a user of the site, I should get a notification if I've been rejected or approved for a position.
         profile.add_notification("You've been rejected for a position!")
         self.save()

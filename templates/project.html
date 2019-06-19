@@ -17,6 +17,9 @@
 
       <div class="circle--project--positions">
         <h2>Positions</h2>
+        <a href='{% url "teams:applications" pk=project.id %}'>
+          <button class="button button-primary">See Applications</button><br/>
+        </a>
         {% if project.creator == request.user.profile %}
           <a class="button button-primary" href="{% url 'teams:add_position' pk=project.id %}">Add Position</a>
         {% endif %}

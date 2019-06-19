@@ -10,7 +10,7 @@
         {% csrf_token %}
         {{ form }}
       </form>
-        <h2>Search</h2>
+        <h1>{{ H1 }}</h1>
         {% if query %}
         <p>Search results for: <span class="secondary-label">{{ query }}</span></p>
         {% endif %}
@@ -34,7 +34,7 @@
         </thead>
         <tbody>
           {% for project in projects %}
-          <tr class="clickable-row" data-href="project.html">
+          <tr class="clickable-row" data-href="{% url 'teams:project' pk=project.id %}">
             <td>
               <h3>{{ project.title }}</h3>
             </td>
@@ -48,7 +48,7 @@
           </tr>
           {% endfor %}
           {% for position in positions %}
-          <tr class="clickable-row" data-href="project.html">
+          <tr class="clickable-row" data-href="{% url 'teams:project' pk=position.project.id %}">
             <td>
               <h3>{{ position.project.title }}</h3>
             </td>
