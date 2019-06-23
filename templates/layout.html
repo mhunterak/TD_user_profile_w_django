@@ -63,7 +63,7 @@
                             <li><a href="{% url 'accounts:edit_profile' %}">Edit Profile</a></li>
                             <li><a href="{% url 'accounts:avatar_upload'%}">Change Avatar</a></li>
                             <li><a href="{% url 'accounts:change_password'%}">Change Password</a></li>
-                            <li><a href="{% url 'accounts:sign_out' %}">Sign Out</a></li>
+                            <li><a href="{% url 'accounts:sign_out' %}">Sign Out (signed in as {{ request.user }})</a></li>
                         </div>
                     </div>
                 </div>

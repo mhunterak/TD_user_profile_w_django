@@ -42,7 +42,7 @@
                 </a>
                 by 
                 <!-- TODO: test -->
-                <a href="{% url 'accounts:profile' pk=project.creator.pk %}">
+                <a href="{% url 'accounts:profile' pk=project.creator.account.username %}">
                   {{ project.creator.account }}
                 </a>
               </h3>
