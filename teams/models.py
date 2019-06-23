@@ -21,7 +21,7 @@ class Project(models.Model):
     description = models.CharField(max_length=256, null=True)
 
 
-# TODO As a user of the site, I should be able to specify the positions my project needs help in with a name, a description, and related skill.
+# As a user of the site, I should be able to specify the positions my project needs help in with a name, a description, and related skill.
 class Position(models.Model):
     """
     Model for a User Skill
@@ -43,7 +43,7 @@ class Position(models.Model):
     incumbent = models.ForeignKey(
         Profile, on_delete=models.CASCADE, related_name="role", null=True, default=None
     )
-    # TODO As a user of the site, I should be able to see all of the applicants for my project's positions.
+    # As a user of the site, I should be able to see all of the applicants for my project's positions.
     applicants = models.ManyToManyField(Profile, related_name="applicants")
     rejects = models.ManyToManyField(Profile, related_name="rejects")
 
@@ -52,6 +52,7 @@ class Position(models.Model):
 
     # TODO As a user of the site, I should be able to approve an applicant for a position in my project.
     def approve_for_position(self, profile):
+        # DOES NOT check for permissions
         self.incumbent = profile
         self.applicants.add([profile])
         self.rejects.remove(profile)

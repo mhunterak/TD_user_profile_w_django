@@ -2,6 +2,11 @@
 {% load app_filters %}
 {% block body %}
     <h1>{{ position.title }}</h1>
+    <h2>
+        for <a href="{% url 'teams:project' pk=position.project.pk %}">
+        {{position.project.title}} 
+    </h2>
+    </a>
     <p>{{ position.description }}</p>
     {% if position.desired_skills.all %}
         <h2>
@@ -11,13 +16,12 @@
         <button class="button button-primary">
             {{ skill.title }}
         </button>
-        
         {% endfor %}
     {% endif %}
     {% if position.incumbent is None %}
     <hr>
         <a class="button button-primary" href="{% url 'teams:apply_for_position' pk=position.id %}">Apply Now</a>
     {% else %}
-        <p>current incumbent: {{ position.incumbent }}</p>
+        <p>current incumbent: {{ position.incumbent.account }}</p>
     {% endif %}
 {% endblock %}

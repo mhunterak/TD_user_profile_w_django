@@ -17,16 +17,18 @@
 
       <div class="circle--project--positions">
         <h2>Positions</h2>
+        {% if project.creator == request.user.profile %}
         <a href='{% url "teams:applications" pk=project.id %}'>
           <button class="button button-primary">See Applications</button><br/>
         </a>
-        {% if project.creator == request.user.profile %}
           <a class="button button-primary" href="{% url 'teams:add_position' pk=project.id %}">Add Position</a>
         {% endif %}
         <ul class="circle--group--list">
         {% for position in project.positions.all %}
         <li>
-          <h3>{{ position.title }}</h3>
+          <a href="{% url 'teams:view_position' pk=position.pk %}">
+            <h3>{{ position.title }}</h3>
+          </a>
           <p>{{ position.description }}</p>
           {% if position.incumbent is None %}
             This position is available! 

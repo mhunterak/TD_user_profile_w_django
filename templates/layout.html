@@ -43,11 +43,31 @@
                     </h1>
                 </div>
                 <div class="circle--fluid--cell circle--fluid--primary">
-                    <nav>
-                        <ul class="circle--inline">
-                            <li><a href="/">Circle</a></li>
-                        </ul>
-                    </nav>
+                    {% if user.is_authenticated %}
+                    <div id='projectsTrigger'>
+                        Projects
+                        <div id='projects'>
+                            <br/>
+                            <li><a href="{% url 'teams:my_projects' %}">My Projects</a></li>
+                            <li><a href="{% url 'teams:add_project' %}">New Project</a></li>
+                            <li><a href="{% url 'teams:project_search' %}">Recent Projects</a></li>
+                            <li><a href="{% url 'teams:position_search' %}">Recent Positions</a></li>
+                        </div>
+                    </div>
+                    <div id='profileTrigger'>
+                        Profile
+                        <div id='profile'>
+                            <br/>
+                            <li><a href="{% url 'accounts:notifications' %}">Notifications</a></li>
+                            <li><a href="{% url 'accounts:profile' pk=user.username %}">My Profile</a></li>
+                            <li><a href="{% url 'accounts:edit_profile' %}">Edit Profile</a></li>
+                            <li><a href="{% url 'accounts:avatar_upload'%}">Change Avatar</a></li>
+                            <li><a href="{% url 'accounts:change_password'%}">Change Password</a></li>
+                            <li><a href="{% url 'accounts:sign_out' %}">Sign Out</a></li>
+                        </div>
+                    </div>
+                </div>
+                            {% endif %}
                 </div>
                 <div class="circle--fluid--cell circle--fluid--secondary">
                     <nav>
@@ -56,26 +76,7 @@
                             <li><a href="{% url 'accounts:sign_up' %}">Sign Up</a></li>
                             <li><a href="{% url 'accounts:sign_in' %}">Sign In</a></li>
                             {% else %}
-                            <div id='projectsTrigger'>
-                                <li>Projects</li>
-                                <div id='projects'>
-                                    <li><a href="{% url 'teams:my_projects' %}">My Projects</a></li>
-                                    <li><a href="{% url 'teams:add_project' %}">New Project</a></li>
-                                    <li><a href="{% url 'teams:project_search' %}">Recent Projects</a></li>
-                                    <li><a href="{% url 'teams:position_search' %}">Recent Positions</a></li>
-                                </div>
-                            </div>
-                            
-                            <div id='profileTrigger'>
-                                <li>Profile</a></li>
-                                <div id='profile'>
-                                    <li><a href="{% url 'accounts:notifications' %}">Notifications</a></li>
-                                    <li><a href="{% url 'accounts:profile' pk=user.username %}">My Profile</a></li>
-                                    <li><a href="{% url 'accounts:edit_profile' %}">Edit Profile</a></li>
-                                    <li><a href="{% url 'accounts:avatar_upload'%}">Change Avatar</a></li>
-                                    <li><a href="{% url 'accounts:change_password'%}">Change Password</a></li>
-                                    <li><a href="{% url 'accounts:sign_out' %}">Sign Out</a></li>
-                                </div>
+                            <<<<
                             {% endif %}
                         </ul>
                     </nav>

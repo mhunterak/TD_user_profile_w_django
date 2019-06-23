@@ -6,7 +6,10 @@
         {% for project in projects %}
         <h2>
             <a href="{% url 'teams:project' pk=project.id %}">
-                {{ project.title }}
+                {{ project.title }}</a>
+            by
+            <a href="{% url 'accounts:profile' pk=project.creator.account %}">
+                {{ project.creator.account }}
             </a>
         </h2>
         <h5>
