@@ -33,12 +33,13 @@
           {% if position.incumbent is None %}
             This position is available! 
             <a class="button button-primary" href="{% url 'teams:apply_for_position' pk=position.id %}">Apply Now</a>
-            {% if project.creator == request.user.profile %}
-              <br> Applicants: <br>
-              {% for applicant in position.applicants.all %}
-              <button class="button button-primary">{{applicant.account.username}}</button>
-              {% endfor %}
-            {% endif %}
+              {% if project.creator == request.user.profile %}
+                <br> Applicants: <br>
+                
+                {% for applicant in position.applicants.all %}
+                <button class="button button-primary">{{applicant.account.username}}</button>
+                {% endfor %}
+              {% endif %}
             {% else %}
             <p>current incumbent: {{ position.incumbent.account.username }}</p>
             <a class="button button-primary button-inactive">Position Filled</a>
@@ -63,7 +64,7 @@
       </ul>
     </div>
   </div>
-
+    {% comment %}
     <div class="grid-25 grid-push-5">
       <div class="circle--secondary--module">
         <h3>Project Needs</h3>
@@ -84,5 +85,7 @@
       </div>
 
     </div>
+    {% endcomment %}
+
   </div>
 {% endblock %}
