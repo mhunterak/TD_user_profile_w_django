@@ -1,26 +1,50 @@
 from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-
 from .models import Profile, Skill, Project, Position
 from .forms import SkillForm, ProjectForm, PositionForm, SearchForm
+
+
+def user_has_email(request):
+    '''This function looks to see if a user has submitted their email yet'''
+    try:
+        # if they have a profile, but their email is None or blank
+        if (
+                request.user.profile.email is None) or (
+                request.user.profile.email == ''):
+            messages.error(
+                request,
+                "Before we get do that, we need your email:")
+            return False
+    # if the user doesn't have a profile yet
+    except User.profile.RelatedObjectDoesNotExist:
+        messages.error(
+            request,
+            "To get started, we need your email:")
+        return False
+    return True
 
 
 # skill Crud - create
 @login_required
 def add_skill(request):
     """adds a skill to user's profile"""
+    if not user_has_email(request):
+        # if a user hasn't sent in their email yet, they can't see profiles
+        return HttpResponseRedirect(reverse('accounts:provide_email'))
+
     # a profile is recalled by the connected user's username
     form = SkillForm()
     if request.method == "POST":
         form = SkillForm(data=request.POST)
         if form.is_valid():
             skill = form.save()
-            skill.account.add([request.user.profile])
+            skill.account.add(request.user.profile)
             print("skill {} saved".format(skill.title))
             messages.success(request, "skill added to your Profile!")
             return HttpResponseRedirect(
@@ -33,6 +57,11 @@ def add_skill(request):
 @login_required
 def add_skill_position(request, pk):
     """adds a skill to a project position"""
+
+    if not user_has_email(request):
+        # if a user hasn't sent in their email yet, they can't see profiles
+        return HttpResponseRedirect(reverse('accounts:provide_email'))
+
     # a profile is recalled by the connected user's username
     position = Position.objects.get(pk=pk)
     project = position.project
@@ -65,6 +94,11 @@ def add_skill_position(request, pk):
 @login_required
 def add_project(request):
     """adds a skill to user's profile"""
+    if not user_has_email(request):
+        # if a user hasn't sent in their email yet, they can't see profiles
+        return HttpResponseRedirect(reverse('accounts:provide_email'))
+
+
     # a profile is recalled by the connected user's username
     form = ProjectForm()
     if request.method == "POST":
@@ -83,12 +117,21 @@ def add_project(request):
 
 @login_required
 def project(request, pk):
+    if not user_has_email(request):
+        # if a user hasn't sent in their email yet, they can't see profiles
+        return HttpResponseRedirect(reverse('accounts:provide_email'))
+
+
     project = Project.objects.get(pk=pk)
     return render(request, "project.html", {"project": project})
 
 
 @login_required
 def add_position(request, pk):
+    if not user_has_email(request):
+        # if a user hasn't sent in their email yet, they can't see profiles
+        return HttpResponseRedirect(reverse('accounts:provide_email'))
+
     """adds a position to a project"""
     # a profile is recalled by the connected user's username
     form = PositionForm()
@@ -120,12 +163,20 @@ def add_position(request, pk):
 
 @login_required
 def view_position(request, pk):
+    if not user_has_email(request):
+        # if a user hasn't sent in their email yet, they can't see profiles
+        return HttpResponseRedirect(reverse('accounts:provide_email'))
+
     position = Position.objects.get(pk=pk)
     return render(request, "position.html", {"position": position})
 
 
 @login_required
 def apply_for_position(request, pk):
+    if not user_has_email(request):
+        # if a user hasn't sent in their email yet, they can't see profiles
+        return HttpResponseRedirect(reverse('accounts:provide_email'))
+
     position = Position.objects.get(pk=pk)
     position.apply_for_position(request.user.profile)
     messages.success(request, "You've applied, good luck!")
@@ -136,8 +187,12 @@ def apply_for_position(request, pk):
 
 @login_required
 def approve_for_position(request, pk, applicant_pk):
+    if not user_has_email(request):
+        # if a user hasn't sent in their email yet, they can't see profiles
+        return HttpResponseRedirect(reverse('accounts:provide_email'))
+
     position = Position.objects.get(pk=pk)
-    if Position.project.creater == request.user.profile:
+    if position.project.creator == request.user.profile:
         applicant = Profile.objects.get(pk=applicant_pk)
         position.approve_for_position(applicant)
         messages.success(request, "You've approved an applicant!")
@@ -150,8 +205,12 @@ def approve_for_position(request, pk, applicant_pk):
 
 @login_required
 def reject_for_position(request, pk, applicant_pk):
+    if not user_has_email(request):
+        # if a user hasn't sent in their email yet, they can't see profiles
+        return HttpResponseRedirect(reverse('accounts:provide_email'))
+
     position = Position.objects.get(pk=pk)
-    if Position.project.creater == request.user.profile:
+    if position.project.creator == request.user.profile:
         applicant = Profile.objects.get(pk=applicant_pk)
         position.reject_for_position(applicant)
         messages.success(request, "You've rejected an applicant!")
@@ -168,12 +227,20 @@ def reject_for_position(request, pk, applicant_pk):
 
 @login_required
 def my_projects(request):
+    if not user_has_email(request):
+        # if a user hasn't sent in their email yet, they can't see profiles
+        return HttpResponseRedirect(reverse('accounts:provide_email'))
+
     projects = Project.objects.all().filter(creator=request.user.profile)
     return render(request, "projects.html", {"H1": "My Projects", "projects": projects})
 
 
 @login_required
 def applications(request, pk):
+    if not user_has_email(request):
+        # if a user hasn't sent in their email yet, they can't see profiles
+        return HttpResponseRedirect(reverse('accounts:provide_email'))
+
     project = Project.objects.get(pk=pk)
     if project.creator == request.user.profile:
         return render(request, "applications.html", {"project": project})
@@ -188,6 +255,10 @@ def applications(request, pk):
 
 @login_required
 def project_search(request):
+    if not user_has_email(request):
+        # if a user hasn't sent in their email yet, they can't see profiles
+        return HttpResponseRedirect(reverse('accounts:provide_email'))
+
     form = SearchForm()
     if request.method == "POST":
         form = SearchForm(request.POST)
@@ -208,6 +279,10 @@ def project_search(request):
 
 @login_required
 def position_search(request):
+    if not user_has_email(request):
+        # if a user hasn't sent in their email yet, they can't see profiles
+        return HttpResponseRedirect(reverse('accounts:provide_email'))
+
     form = SearchForm()
     if request.method == "POST":
         form = SearchForm(request.POST)
